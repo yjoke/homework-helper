@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="work.yjoker.homeworkhelper.mapper.LoginInfoMapper">
+
+    <resultMap id="BaseResultMap" type="work.yjoker.homeworkhelper.entity.LoginInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="phone" column="phone" jdbcType="CHAR"/>
+            <result property="password" column="password" jdbcType="CHAR"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+            <result property="idModify" column="id_modify" jdbcType="BIGINT"/>
+            <result property="isBlacklist" column="is_blacklist" jdbcType="TINYINT"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,phone,password,
+        gmt_create,gmt_modify,id_modify,
+        is_blacklist,is_deleted
+    </sql>
+</mapper>

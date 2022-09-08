@@ -1,3 +1,5 @@
 /.idea
 /src/main/resources/application.yml
 /homework-helper.iml
+/target
+/log
