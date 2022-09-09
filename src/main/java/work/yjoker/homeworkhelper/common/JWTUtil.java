@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTValidator;
 import cn.hutool.jwt.signers.JWTSignerUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +13,12 @@ import org.springframework.stereotype.Component;
  * @author HeYunjia
  */
 
-@Slf4j
 @Component
 public class JWTUtil {
 
     private static byte[] key;
 
-    @Value("${homework-helper.secret}")
+    @Value("${homework-helper.token.secret}")
     private void setKey(String secret) {
         key = secret.getBytes();
     }

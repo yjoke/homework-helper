@@ -49,8 +49,8 @@ public class LoginController {
 
     @PostMapping("code")
     @ApiOperation("获取手机验证码")
-    public ApiResult<String> getCode() {
-        return loginService.getCode();
+    public ApiResult<String> getCode(@RequestBody LoginInfoVO loginInfoVO) {
+        return loginService.getCode(loginInfoVO);
     }
 }
 

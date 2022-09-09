@@ -16,5 +16,5 @@ public interface LoginInfoService extends IService<LoginInfo> {
 
     ApiResult<String> forget(LoginInfoVO loginInfoVO);
 
-    ApiResult<String> getCode();
+    ApiResult<String> getCode(LoginInfoVO loginInfoVO);
 }

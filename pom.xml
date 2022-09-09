@@ -95,6 +95,12 @@
             <version>28.0-jre</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java</artifactId>
+            <version>3.1.561</version>
+        </dependency>
+
     </dependencies>
 
     <build>

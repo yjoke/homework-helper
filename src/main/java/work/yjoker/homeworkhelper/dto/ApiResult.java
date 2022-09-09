@@ -2,38 +2,67 @@ package work.yjoker.homeworkhelper.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.Getter;
+
+import java.util.HashMap;
 
 import static work.yjoker.homeworkhelper.constant.ApiResultConstants.*;
 
 /**
  * @author HeYunjia
  */
-@Getter
+@Data
 @ApiModel("统一返回类")
 public class ApiResult <T> {
 
     @ApiModelProperty("编码: 2 成功但没有数据, 1 成功, 0 失败, -1 异常")
-    private int code;
+    private Integer code;
 
     @ApiModelProperty("提示信息")
     private String msg;
 
     @ApiModelProperty("数据")
-    private T data;
+    private Object data;
 
     private ApiResult() {}
 
-    public static ApiResult<String> success() {
-        return ApiResult.success(EMPTY)
-                .code(SUCCESS_NOT_DATA_CODE);
+
+    public static ApiResult<String> success(String msg) {
+        return success().msg(msg);
     }
 
-    public static <T> ApiResult<T> success(T object) {
+    public static ApiResult<String> success() {
+        ApiResult<String> result = new ApiResult<>();
+
+        result.setCode(SUCCESS_NOT_DATA_CODE);
+        result.setMsg(DEFAULT_SUCCESS);
+        result.setData(EMPTY);
+
+        return result;
+    }
+
+    public static ApiResult<String> success(String key, String data) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(key, data);
+        ApiResult<String> result = new ApiResult<>();
+
+        result.setCode(SUCCESS_CODE);
+        result.setMsg(DEFAULT_SUCCESS);
+        result.setData(map);
+
+        return result;
+    }
+
+    public static <T> ApiResult<T> success(T data) {
+        return success(data, DEFAULT_SUCCESS);
+    }
+
+    public static <T> ApiResult<T> success(T data, String msg) {
         return new ApiResult<T>()
                 .code(SUCCESS_CODE)
-                .msg(DEFAULT_SUCCESS)
-                .data(object);
+                .msg(msg)
+                .data(data);
     }
 
     public static ApiResult<String> fail() {
@@ -58,18 +87,18 @@ public class ApiResult <T> {
                 .data(EMPTY);
     }
 
-    public ApiResult<T> data(T data) {
-        this.data = data;
-        return this;
-    }
-
-    public ApiResult<T> msg(String msg) {
-        this.msg = msg;
-        return this;
-    }
-
     private ApiResult<T> code(Integer code) {
-        this.code = code;
+        this.setCode(code);
+        return this;
+    }
+
+    private ApiResult<T> msg(String msg) {
+        this.setMsg(msg);
+        return this;
+    }
+
+    private ApiResult<T> data(T data) {
+        this.setData(data);
         return this;
     }
 }
