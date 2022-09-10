@@ -27,20 +27,22 @@ public class ApiResult <T> {
     private ApiResult() {}
 
 
+    /**
+     * 成功返回, 提示信息 msg, code = 2
+     */
     public static ApiResult<String> success(String msg) {
-        return success().msg(msg);
+        return ApiResult.<String>empty()
+                .code(SUCCESS_NOT_DATA_CODE)
+                .msg(msg);
     }
 
-    public static ApiResult<String> success() {
-        ApiResult<String> result = new ApiResult<>();
-
-        result.setCode(SUCCESS_NOT_DATA_CODE);
-        result.setMsg(DEFAULT_SUCCESS);
-        result.setData(EMPTY);
-
-        return result;
-    }
-
+    /**
+     * 标识成功, 返回包装后的字符串, 默认提示信息, code = 1
+     *
+     * @param key 字符串 key
+     * @param data 数据
+     * @return 返回字符串
+     */
     public static ApiResult<String> success(String key, String data) {
         HashMap<String, String> map = new HashMap<>();
         map.put(key, data);
@@ -53,10 +55,16 @@ public class ApiResult <T> {
         return result;
     }
 
+    /**
+     * 成功返回 T 类型数据, 默认提示, code = 1
+     */
     public static <T> ApiResult<T> success(T data) {
         return success(data, DEFAULT_SUCCESS);
     }
 
+    /**
+     * 成功返回 T 类型数据, 提示信息 msg, code = 1
+     */
     public static <T> ApiResult<T> success(T data, String msg) {
         return new ApiResult<T>()
                 .code(SUCCESS_CODE)
@@ -64,26 +72,28 @@ public class ApiResult <T> {
                 .data(data);
     }
 
-    public static ApiResult<String> fail() {
-        return ApiResult.fail(DEFAULT_FAIL);
-    }
-
-    public static ApiResult<String> fail(String msg) {
-        return new ApiResult<String>()
+    /**
+     * 包装为 T 返回类型的失败返回, 提示信息 msg, code = 0
+     */
+    public static <T> ApiResult<T> fail(String msg) {
+        return ApiResult.<T>empty()
                 .code(FAIL_CODE)
-                .msg(msg)
-                .data(EMPTY);
+                .msg(msg);
     }
 
-    public static ApiResult<String> error() {
-        return ApiResult.error(DEFAULT_ERROR);
-    }
-
-    public static ApiResult<String> error(String msg) {
-        return new ApiResult<String>()
+    /**
+     * 包装为 T 返回类型的错误返回, 提示信息 msg, code = 0
+     */
+    public static <T> ApiResult<T> error(String msg) {
+        return ApiResult.<T>empty()
                 .code(ERROR_CODE)
-                .msg(msg)
-                .data(EMPTY);
+                .msg(msg);
+    }
+
+    private static <T> ApiResult<T> empty() {
+        ApiResult<T> result = new ApiResult<>();
+        result.setData(EMPTY);
+        return result;
     }
 
     private ApiResult<T> code(Integer code) {

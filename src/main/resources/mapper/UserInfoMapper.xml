@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="work.yjoker.homeworkhelper.mapper.UserInfoMapper">
+
+    <resultMap id="BaseResultMap" type="work.yjoker.homeworkhelper.entity.UserInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="clazz" column="clazz" jdbcType="CHAR"/>
+            <result property="number" column="number" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+            <result property="idModify" column="id_modify" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,clazz,number,
+        name,avatar,gmt_create,
+        gmt_modify,id_modify
+    </sql>
+
+    <select id="selectByPhone" resultType="work.yjoker.homeworkhelper.dto.UserInfoDTO">
+        select phone, clazz, number, name, avatar
+            from user_info u join login_info l on u.id = l.id
+            where l.is_deleted = 0 and l.phone = #{phone}
+    </select>
+</mapper>

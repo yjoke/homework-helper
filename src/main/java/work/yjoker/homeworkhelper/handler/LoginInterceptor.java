@@ -10,6 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import work.yjoker.homeworkhelper.common.JWTUtil;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.util.Holder;
+import work.yjoker.homeworkhelper.util.IPUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,14 +29,15 @@ public class LoginInterceptor implements HandlerInterceptor {
      * 验证用户是否登录
      */
     @Override
+    @SuppressWarnings("all")  // Not annotated parameter overrides @NonNullApi parameter
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (HttpMethod.OPTIONS.toString().equals(request.getMethod())) return true;
 
         String authorization = request.getHeader(Header.AUTHORIZATION.toString());
-        log.info("请求的 Authorization 字段为: {}", authorization);
 
         String token = JWTUtil.verifyAuthorization(authorization);
         if (StrUtil.isEmpty(token)) {
+            log.info("{} 请求 {} 被拦截", IPUtils.getIpAddress(request), request.getRequestURI());
             response.getWriter().write(JSONUtil.toJsonStr(ApiResult.fail(NOT_LOGIN)));
             return false;
         }

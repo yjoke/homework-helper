@@ -2,18 +2,14 @@ package work.yjoker.homeworkhelper.common;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.Header;
-import cn.hutool.json.JSONUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTValidator;
 import cn.hutool.jwt.signers.JWTSignerUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import work.yjoker.homeworkhelper.dto.ApiResult;
 
 import java.util.Date;
 
-import static work.yjoker.homeworkhelper.constant.ApiResultConstants.NOT_LOGIN;
 
 
 /**
@@ -70,6 +66,8 @@ public class JWTUtil {
         if (StrUtil.isBlank(authorization)) return null;
 
         int spaceIndex = authorization.indexOf(SPACE);
+        if (spaceIndex < 0) return null;
+
         String type = authorization.substring(0, spaceIndex);
         if (!type.equals(VALIDATION_TYPE)) return null;
 

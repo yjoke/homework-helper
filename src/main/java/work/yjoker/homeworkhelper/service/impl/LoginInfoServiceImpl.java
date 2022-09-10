@@ -42,6 +42,8 @@ public class LoginInfoServiceImpl extends ServiceImpl<LoginInfoMapper, LoginInfo
 
     private static final String CODE_KEY = PROJECT_PREFIX + CODE_PREFIX;
 
+    private static final byte NOT_IS_BLACK = 0;
+
     private static final int DEFAULT_CODE_LEN = 6;
     private static final int DEFAULT_CODE_EXPIRE = 2;
 
@@ -51,6 +53,7 @@ public class LoginInfoServiceImpl extends ServiceImpl<LoginInfoMapper, LoginInfo
         LoginInfo one = lambdaQuery()
                 .eq(LoginInfo::getPhone, loginInfo.getPhone())
                 .eq(LoginInfo::getPassword, loginInfo.getPassword())
+                .eq(LoginInfo::getIsBlacklist, NOT_IS_BLACK)
                 .one();
 
         if (ObjectUtil.isNull(one)) ApiResult.fail("账号或密码错误");

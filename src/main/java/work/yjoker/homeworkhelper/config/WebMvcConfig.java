@@ -37,9 +37,20 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
+
+                // 登录使用的地址
                 .excludePathPatterns("/login")
                 .excludePathPatterns("/register")
                 .excludePathPatterns("/forget")
-                .excludePathPatterns("/code");
+                .excludePathPatterns("/code")
+
+                // swagger 文档的静态资源
+                .excludePathPatterns("/doc.html")
+                .excludePathPatterns("/swagger-resources/**")
+                .excludePathPatterns("/webjars/**")
+                .excludePathPatterns("/v2/**")
+                .excludePathPatterns("/favicon.ico")
+                .excludePathPatterns("/swagger-ui.html/**")
+                .excludePathPatterns("/error");
     }
 }
