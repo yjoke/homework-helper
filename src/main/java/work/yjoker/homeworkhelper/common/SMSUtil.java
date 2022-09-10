@@ -17,10 +17,10 @@ public class SMSUtil {
 
 
     /**
-     * 发送 expire 分钟有效的 len 位验证码短信到 phone 手机号
+     * 发送 expire 分钟有效的验证码 code 到 phone 手机号
      *
-     * @param phone 手机号
-     * @param code 验证码位数
+     * @param phone  手机号
+     * @param code   验证码
      * @param expire 有效时间 min
      * @return 返回发送是否成功
      */
@@ -38,12 +38,16 @@ public class SMSUtil {
         request.setPhoneNumberSet(new String[]{countryCode + phone});
 
         try {
-            client.SendSms(request);
-            return true;
+            return SUCCESS_CODE.equals(client.SendSms(request).getSendStatusSet()[0].getCode());
         } catch (TencentCloudSDKException e) {
             return false;
         }
     }
+
+    /**
+     * 短信发送成功的 code 字段标识
+     */
+    private static final String SUCCESS_CODE = "Ok";
 
 
     /**

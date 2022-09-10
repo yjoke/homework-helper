@@ -8,7 +8,6 @@ import lombok.Data;
 
 /**
  * 保存登录相关的信息
- * @TableName login_info
  */
 @TableName(value ="login_info")
 @Data
@@ -44,7 +43,7 @@ public class LoginInfo implements Serializable {
     /**
      * 修改人的 id
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableField(fill = FieldFill.UPDATE)
     private Long idModify;
 
     /**

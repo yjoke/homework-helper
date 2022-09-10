@@ -43,13 +43,14 @@ public class LoginController {
     @PostMapping("forget")
     @ApiOperation("忘记密码")
     public ApiResult<String> forget(@RequestBody LoginInfoVO loginInfoVO) {
-        log.info("要修改的手机号和密码: {}", loginInfoVO);
+        log.info("忘记密码: {}", loginInfoVO);
         return loginService.forget(loginInfoVO);
     }
 
     @PostMapping("code")
     @ApiOperation("获取手机验证码")
     public ApiResult<String> getCode(@RequestBody LoginInfoVO loginInfoVO) {
+        log.info("发送短信: {}", loginInfoVO);
         return loginService.getCode(loginInfoVO);
     }
 }

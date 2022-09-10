@@ -14,5 +14,7 @@ public class ApiResultConstants {
     public static final Integer FAIL_CODE = 0;
     public static final Integer ERROR_CODE = -1;
 
+    public static final String NOT_LOGIN = "notLogin";
+
 
 }
