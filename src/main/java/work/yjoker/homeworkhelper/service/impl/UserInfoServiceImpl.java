@@ -1,6 +1,5 @@
 package work.yjoker.homeworkhelper.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import work.yjoker.homeworkhelper.dto.ApiResult;
@@ -45,7 +44,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     public ApiResult<String> uploadInfo(UserInfoDTO userInfoDTO) {
         String phone = Holder.get(PHONE_HOLDER);
 
-        if (!phone.equals(userInfoDTO.getPhone())) return ApiResult.fail("修改失败, 请不要恶意修改他人信息");
+        if (!phone.equals(userInfoDTO.getPhone())) return ApiResult.fail("上传失败, 请不要恶意修改他人信息");
 
         LoginInfo loginInfo = loginInfoService.lambdaQuery()
                 .eq(LoginInfo::getPhone, phone)

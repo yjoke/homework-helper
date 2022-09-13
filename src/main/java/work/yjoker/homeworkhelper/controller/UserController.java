@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.UserInfoDTO;
 import work.yjoker.homeworkhelper.service.UserInfoService;
@@ -34,14 +33,6 @@ public class UserController {
     public ApiResult<UserInfoDTO> selfInfo() {
         log.info("手机号为 {} 的用户请求个人信息", Holder.get(PHONE_HOLDER));
         return userInfoService.selfInfo();
-    }
-
-    @PostMapping("upload-avatar")
-    @ApiOperation("用户上传头像")
-    public ApiResult<String> uploadAvatar(@RequestParam("avatar") MultipartFile file) {
-        log.info("手机号为 {} 的用户上传头像", Holder.get(PHONE_HOLDER));
-        // TODO 上传头像接口未实现
-        return ApiResult.fail("接口未实现");
     }
 
     @PostMapping("upload-info")
