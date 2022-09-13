@@ -11,4 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface UserInfoService extends IService<UserInfo> {
 
     ApiResult<UserInfoDTO> selfInfo();
+
+    ApiResult<String> uploadInfo(UserInfoDTO userInfoDTO);
 }

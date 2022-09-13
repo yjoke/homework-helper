@@ -1,17 +1,13 @@
 package work.yjoker.homeworkhelper.service.impl;
 
-import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.RandomUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.http.Header;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import work.yjoker.homeworkhelper.common.JWTUtil;
-import work.yjoker.homeworkhelper.common.SMSUtil;
+import work.yjoker.homeworkhelper.common.wrapper.SmsWrapper;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.entity.LoginInfo;
 import work.yjoker.homeworkhelper.service.LoginInfoService;
@@ -20,10 +16,6 @@ import org.springframework.stereotype.Service;
 import work.yjoker.homeworkhelper.vo.LoginInfoVO;
 
 import javax.annotation.Resource;
-import java.util.concurrent.TimeUnit;
-
-import static work.yjoker.homeworkhelper.constant.RedisConstants.CODE_PREFIX;
-import static work.yjoker.homeworkhelper.constant.RedisConstants.PROJECT_PREFIX;
 
 /**
  *
@@ -35,17 +27,12 @@ public class LoginInfoServiceImpl extends ServiceImpl<LoginInfoMapper, LoginInfo
     implements LoginInfoService{
 
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private SmsWrapper smsWrapper;
 
     @Value("${homework-helper.login.secret}")
     private String secret;
 
-    private static final String CODE_KEY = PROJECT_PREFIX + CODE_PREFIX;
-
     private static final byte NOT_IS_BLACK = 0;
-
-    private static final int DEFAULT_CODE_LEN = 6;
-    private static final int DEFAULT_CODE_EXPIRE = 2;
 
     @Override
     public ApiResult<String> login(LoginInfoVO loginInfoVO) {
@@ -66,17 +53,21 @@ public class LoginInfoServiceImpl extends ServiceImpl<LoginInfoMapper, LoginInfo
     @Override
     public ApiResult<String> register(LoginInfoVO loginInfoVO) {
 
-        if (errorCode(loginInfoVO)) return ApiResult.fail("验证码错误");
+        if (smsWrapper.verifyCode(loginInfoVO.getPhone(), loginInfoVO.getCode())) {
+            return save(loginInfoVO.toLoginInfo(secret))
+                    ? ApiResult.success("注册成功")
+                    : ApiResult.fail("注册失败");
+        }
 
-        return save(loginInfoVO.toLoginInfo(secret))
-                ? ApiResult.success("注册成功")
-                : ApiResult.fail("注册失败");
+        return ApiResult.fail("验证码错误");
     }
 
     @Override
     public ApiResult<String> forget(LoginInfoVO loginInfoVO) {
 
-        if (errorCode(loginInfoVO)) return ApiResult.fail("验证码错误");
+        if (!smsWrapper.verifyCode(loginInfoVO.getPhone(), loginInfoVO.getCode())) {
+            return ApiResult.fail("验证码错误");
+        }
 
         LoginInfo loginInfo = lambdaQuery()
                 .eq(LoginInfo::getPhone, loginInfoVO.getPhone())
@@ -96,43 +87,17 @@ public class LoginInfoServiceImpl extends ServiceImpl<LoginInfoMapper, LoginInfo
     public ApiResult<String> getCode(LoginInfoVO loginInfoVO) {
 
         String phone = loginInfoVO.getPhone();
-        String key = CODE_KEY + phone;
-        if (BooleanUtil.isTrue(stringRedisTemplate.hasKey(key))) {
+        if (smsWrapper.hasCode(phone)) {
             return ApiResult.fail("发送短信频繁, 请稍后重试");
         }
 
-        String code = RandomUtil.randomNumbers(DEFAULT_CODE_LEN);
-        if (SMSUtil.sendMessage(phone, code, DEFAULT_CODE_EXPIRE)) {
-            stringRedisTemplate.opsForValue()
-                    .set(key, code, DEFAULT_CODE_EXPIRE, TimeUnit.MINUTES);
-
+        if (smsWrapper.sendMessage(phone)) {
             return ApiResult.success("短信发送成功, 请注意查收");
         } else {
             log.error("短信发送失败: {}", loginInfoVO);
             return ApiResult.fail("短信发送失败, 请稍后重试");
         }
     }
-
-    /**
-     * 校验验证码是否非法
-     *
-     * @param loginInfoVO 登录/注册信息
-     * @return 返回是否非法
-     */
-    private boolean errorCode(LoginInfoVO loginInfoVO) {
-
-        String phone = loginInfoVO.getPhone();
-        if (StrUtil.isEmpty(phone)) return false;
-
-        String code = loginInfoVO.getCode();
-        if (StrUtil.isEmpty(code)) return false;
-
-        String key = CODE_KEY + phone;
-        String correct = stringRedisTemplate.opsForValue().get(key);
-
-        return !code.equals(correct);
-    }
-
 }
 
 
