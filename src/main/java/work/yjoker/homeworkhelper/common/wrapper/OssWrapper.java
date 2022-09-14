@@ -64,6 +64,9 @@ public class OssWrapper {
         return urlPrefix;
     }
 
+    /**
+     * 根据文件大小获取存储文件夹
+     */
     private String getFolder(long size, MemoryUnit unit) {
         long megaByte = unit.toMegaByte(size);
 

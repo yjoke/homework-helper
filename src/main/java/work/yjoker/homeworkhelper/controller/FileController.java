@@ -20,7 +20,7 @@ import static work.yjoker.homeworkhelper.util.Holder.PHONE_HOLDER;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("upload")
-@Api(tags = "用户信息相关")
+@Api(tags = "文件相关")
 public class FileController {
 
     @Resource

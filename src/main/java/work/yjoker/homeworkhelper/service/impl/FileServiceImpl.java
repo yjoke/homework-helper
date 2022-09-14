@@ -32,7 +32,7 @@ public class FileServiceImpl implements FileService {
     /**
      * 返回数据的头像 url 的 key
      */
-    private static final String AVATAR_PATH_KEY = "avatarUrl";
+    private static final String AVATAR_PATH_KEY = "avatar";
 
     @Override
     public ApiResult<String> saveAvatar(MultipartFile file) {
