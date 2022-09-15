@@ -46,16 +46,14 @@ public class UserController {
     @ApiOperation("手机号换绑")
     public ApiResult<String> modifyPhone(@RequestBody LoginInfoVO loginInfoVO) {
         log.info("手机号换绑: {}", loginInfoVO);
-        // TODO 手机号换绑
-        return ApiResult.fail("接口还未实现");
+        return userInfoService.modifyPhone(loginInfoVO);
     }
 
     @PostMapping("modify-password")
     @ApiOperation("修改密码")
     public ApiResult<String> modifyPassword(@RequestBody LoginInfoVO loginInfoVO) {
         log.info("修改密码: {}", loginInfoVO);
-        // TODO 修改密码接口
-        return ApiResult.fail("接口还未实现");
+        return userInfoService.modifyPassword(loginInfoVO);
     }
 
     @PostMapping("logout")

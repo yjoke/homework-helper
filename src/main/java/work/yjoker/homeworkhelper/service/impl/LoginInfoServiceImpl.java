@@ -43,7 +43,7 @@ public class LoginInfoServiceImpl extends ServiceImpl<LoginInfoMapper, LoginInfo
                 .eq(LoginInfo::getIsBlacklist, NOT_IS_BLACK)
                 .one();
 
-        if (ObjectUtil.isNull(one)) ApiResult.fail("账号或密码错误");
+        if (ObjectUtil.isNull(one)) return ApiResult.fail("账号或密码错误");
 
         String token = JWTUtil.create(loginInfoVO.getPhone());
 
