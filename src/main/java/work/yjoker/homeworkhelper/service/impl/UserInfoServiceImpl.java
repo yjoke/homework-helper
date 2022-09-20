@@ -44,7 +44,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     public ApiResult<UserInfoDTO> selfInfo() {
 
         String phone = Holder.get(PHONE_HOLDER);
-        UserInfoDTO userInfoDTO = userInfoMapper.selectByPhone(phone);
+        UserInfoDTO userInfoDTO = userInfoMapper.selectDTOByPhone(phone);
 
         if (ObjectUtil.isNull(userInfoDTO)) return ApiResult.fail("请先完善信息");
 

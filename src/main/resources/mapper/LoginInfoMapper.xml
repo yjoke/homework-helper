@@ -20,4 +20,10 @@
         gmt_create,gmt_modify,id_modify,
         is_blacklist,is_deleted
     </sql>
+    <select id="selectIDByPhone" resultType="java.lang.Long">
+        SELECT id
+            FROM login_info
+            WHERE phone = #{phone}
+            LIMIT 0, 1
+    </select>
 </mapper>

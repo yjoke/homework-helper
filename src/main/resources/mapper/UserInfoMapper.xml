@@ -21,9 +21,9 @@
         gmt_modify,id_modify
     </sql>
 
-    <select id="selectByPhone" resultType="work.yjoker.homeworkhelper.dto.UserInfoDTO">
-        select phone, clazz, number, name, avatar
-            from user_info u join login_info l on u.id = l.id
-            where l.is_deleted = 0 and l.phone = #{phone}
+    <select id="selectDTOByPhone" resultType="work.yjoker.homeworkhelper.dto.UserInfoDTO">
+        SELECT phone, clazz, number, name, avatar
+            FROM user_info u JOIN login_info l ON u.id = l.id
+            WHERE l.is_deleted = 0 AND l.phone = #{phone}
     </select>
 </mapper>

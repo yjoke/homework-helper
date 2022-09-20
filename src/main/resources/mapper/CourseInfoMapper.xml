@@ -20,4 +20,9 @@
         course_img,gmt_create,gmt_modify,
         id_modify,is_deleted
     </sql>
+    <select id="selectDTOByCreateId" resultType="work.yjoker.homeworkhelper.dto.CourseInfoDTO">
+        SELECT c.id, u.name AS create_user_name, c.course_name, c.course_img
+            FROM course_info c JOIN user_info u ON c.create_id = u.id
+            WHERE c.create_id = #{createId};
+    </select>
 </mapper>
