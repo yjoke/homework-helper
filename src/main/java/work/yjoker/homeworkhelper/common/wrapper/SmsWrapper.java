@@ -53,7 +53,7 @@ public class SmsWrapper {
         String key = CODE_KEY_PREFIX + phone;
         String correct = stringRedisTemplate.opsForValue().get(key);
 
-        return !code.equals(correct);
+        return code.equals(correct);
     }
 
     /**

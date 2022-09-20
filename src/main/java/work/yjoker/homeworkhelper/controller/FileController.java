@@ -33,4 +33,11 @@ public class FileController {
         return fileService.saveAvatar(file);
     }
 
+    @PostMapping("cover")
+    @ApiOperation("上传课程封面")
+    public ApiResult<String> saveCover(@RequestParam("cover") MultipartFile file) {
+        log.info("手机号位 {} 的用户上传封面头像", Holder.get(PHONE_HOLDER));
+        return fileService.saveCover(file);
+    }
+
 }

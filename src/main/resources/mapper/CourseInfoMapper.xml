@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="work.yjoker.homeworkhelper.mapper.CourseInfoMapper">
+
+    <resultMap id="BaseResultMap" type="work.yjoker.homeworkhelper.entity.CourseInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="createId" column="create_id" jdbcType="BIGINT"/>
+            <result property="courseName" column="course_name" jdbcType="VARCHAR"/>
+            <result property="courseImg" column="course_img" jdbcType="VARCHAR"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+            <result property="idModify" column="id_modify" jdbcType="BIGINT"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,create_id,course_name,
+        course_img,gmt_create,gmt_modify,
+        id_modify,is_deleted
+    </sql>
+</mapper>

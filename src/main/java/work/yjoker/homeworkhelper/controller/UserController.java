@@ -35,7 +35,7 @@ public class UserController {
         return userInfoService.selfInfo();
     }
 
-    @PostMapping("upload-info")
+    @PostMapping
     @ApiOperation("用户上传个人信息")
     public ApiResult<String> uploadInfo(@RequestBody UserInfoDTO userInfoDTO) {
         log.info("手机号为 {} 的用户上传个人信息: {}", Holder.get(PHONE_HOLDER), userInfoDTO);

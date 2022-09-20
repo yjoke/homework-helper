@@ -8,4 +8,6 @@ import work.yjoker.homeworkhelper.dto.ApiResult;
  */
 public interface FileService {
     ApiResult<String> saveAvatar(MultipartFile file);
+
+    ApiResult<String> saveCover(MultipartFile file);
 }
