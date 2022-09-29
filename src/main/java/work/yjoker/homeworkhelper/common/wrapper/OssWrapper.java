@@ -29,7 +29,7 @@ public class OssWrapper {
         this.oss = new OSSClientBuilder()
                 .build(endpoint, accessKeyId, accessKeySecret, conf);
 
-        this.urlPrefix = HTTPS + endpoint + "/" + basePath;
+        this.urlPrefix = HTTP + endpoint + "/" + basePath;
         this.bucketName = bucketName;
         this.basePath = basePath;
     }
@@ -88,7 +88,7 @@ public class OssWrapper {
     /**
      * url 头部
      */
-    private static final String HTTPS = "https://";
+    private static final String HTTP = "http://";
 
     /**
      * 客户端实例
