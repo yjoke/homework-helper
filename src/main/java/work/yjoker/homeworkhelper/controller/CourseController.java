@@ -1,6 +1,5 @@
 package work.yjoker.homeworkhelper.controller;
 
-import cn.hutool.core.util.RandomUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +16,6 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import static work.yjoker.homeworkhelper.util.Holder.PHONE_HOLDER;
-import static work.yjoker.homeworkhelper.util.Holder.get;
 
 /**
  * @author HeYunjia
@@ -55,8 +53,16 @@ public class CourseController {
     @GetMapping("{id}")
     @ApiModelProperty("获取课程信息")
     public ApiResult<CourseInfoDTO> courseInfoDTO(@PathVariable Long id) {
-        log.info("用户 {} 获取课程信息 {}", Holder.get(PHONE_HOLDER), id);
+        log.info("用户 {} 获取课程 {} 的信息", Holder.get(PHONE_HOLDER), id);
         return courseInfoService.courseInfoDTO(id);
+    }
+
+    @DeleteMapping("{id}")
+    @ApiModelProperty("删除课程信息")
+    public ApiResult<String> removeCourse(@PathVariable Long id) {
+        log.info("用户 {} 删除课程 {} 的信息", Holder.get(PHONE_HOLDER), id);
+        // TODO 删除课程接口, 需要同时删除学生的添加信息 等, 后续完善
+        return ApiResult.fail("接口还未实现");
     }
 
     @PutMapping
