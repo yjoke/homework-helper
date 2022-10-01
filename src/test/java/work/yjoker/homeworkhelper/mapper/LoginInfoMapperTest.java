@@ -17,7 +17,7 @@ class LoginInfoMapperTest {
 
     @Test
     void selectIDByPhone() {
-        Long aLong = loginInfoMapper.selectIDByPhone("15635841133");
+        Long aLong = loginInfoMapper.selectIdByPhone("15635841133");
         System.out.println(aLong);
     }
 }

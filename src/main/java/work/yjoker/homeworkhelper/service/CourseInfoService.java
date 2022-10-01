@@ -15,4 +15,12 @@ public interface CourseInfoService extends IService<CourseInfo> {
     ApiResult<String> saveCourse(CourseInfoDTO courseInfoDTO);
 
     ApiResult<List<CourseInfoDTO>> created();
+
+    ApiResult<CourseInfoDTO> courseInfoDTO(Long id);
+
+    ApiResult<String> modifyCourseInfo(CourseInfo courseInfo);
+
+    ApiResult<String> code(Long id);
+
+    ApiResult<String> modifyCode(Long id);
 }

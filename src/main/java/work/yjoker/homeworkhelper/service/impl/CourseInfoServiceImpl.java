@@ -1,7 +1,10 @@
 package work.yjoker.homeworkhelper.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import work.yjoker.homeworkhelper.common.wrapper.OssWrapper;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.CourseInfoDTO;
@@ -15,7 +18,9 @@ import work.yjoker.homeworkhelper.util.Holder;
 import javax.annotation.Resource;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static work.yjoker.homeworkhelper.constant.ApiResultConstants.NOT_LOGIN;
 import static work.yjoker.homeworkhelper.util.Holder.PHONE_HOLDER;
 
 /**
@@ -35,10 +40,13 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
     @Resource
     private OssWrapper ossWrapper;
 
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
     @Override
     public ApiResult<String> saveCourse(CourseInfoDTO courseInfoDTO) {
 
-        Long createId = loginInfoMapper.selectIDByPhone(Holder.get(PHONE_HOLDER));
+        Long createId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
 
 
         CourseInfo courseInfo = courseInfoDTO.toCourseInfo(createId, ossWrapper.getUrlPrefix().length());
@@ -53,7 +61,7 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
     @Override
     public ApiResult<List<CourseInfoDTO>> created() {
 
-        Long createId = loginInfoMapper.selectIDByPhone(Holder.get(PHONE_HOLDER));
+        Long createId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
 
         List<CourseInfoDTO> courseInfoDTOS = courseInfoMapper.selectDTOByCreateId(createId);
 
@@ -64,6 +72,79 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
         });
 
         return ApiResult.success(courseInfoDTOS);
+    }
+
+    @Override
+    public ApiResult<CourseInfoDTO> courseInfoDTO(Long id) {
+        String phone = Holder.get(PHONE_HOLDER);
+        Long createdId = loginInfoMapper.selectIdByPhone(phone);
+        if (createdId == null) return ApiResult.fail(NOT_LOGIN);
+
+        CourseInfo courseInfo = lambdaQuery()
+                .eq(CourseInfo::getId, id)
+                .eq(CourseInfo::getCreateId, createdId)
+                .one();
+
+        // TODO 这里直接默认课程存在了, 直接返回了
+        CourseInfoDTO courseInfoDTO = BeanUtil.copyProperties(courseInfo, CourseInfoDTO.class);
+
+        String courseImg = courseInfoDTO.getCourseImg();
+        courseInfoDTO.setCourseImg(ossWrapper.getUrlPrefix() + courseImg);
+        return ApiResult.success(courseInfoDTO);
+    }
+
+    @Override
+    public ApiResult<String> modifyCourseInfo(CourseInfo courseInfo) {
+        String phone = Holder.get(PHONE_HOLDER);
+
+        Long createdId = loginInfoMapper.selectIdByPhone(phone);
+
+        // TODO 这里前端传来的数据没有创建者 id, 地址也是全部地址处理一下地址
+        courseInfo.setCreateId(createdId);
+
+        int length = ossWrapper.getUrlPrefix().length();
+        String courseImg = courseInfo.getCourseImg();
+        courseImg = courseImg.substring(length);
+        courseInfo.setCourseImg(courseImg);
+
+        boolean update = lambdaUpdate()
+                .eq(CourseInfo::getId, courseInfo.getId())
+                .eq(CourseInfo::getCreateId, createdId)
+                .update(courseInfo);
+
+        return update
+                ? ApiResult.success("修改成功")
+                : ApiResult.fail("修改失败");
+    }
+
+    @Override
+    public ApiResult<String> code(Long id) {
+
+        String code = stringRedisTemplate.opsForValue()
+                .get(String.valueOf(id));
+        if (code == null) code = "";
+
+        return ApiResult.success("code", code);
+    }
+
+    @Override
+    // TODO 没有做原子化操作, 没有去重,
+    public ApiResult<String> modifyCode(Long id) {
+
+        String strId = String.valueOf(id);
+
+        String code = stringRedisTemplate.opsForValue()
+                .get(strId);
+        if (code != null) stringRedisTemplate.delete(code);
+
+        stringRedisTemplate.delete(strId);
+
+        String newCode = RandomUtil.randomString(6);
+
+        stringRedisTemplate.opsForValue().set(strId, newCode, 7, TimeUnit.DAYS);
+        stringRedisTemplate.opsForValue().set(newCode, strId, 7, TimeUnit.DAYS);
+
+        return ApiResult.success("code", newCode);
     }
 
 }

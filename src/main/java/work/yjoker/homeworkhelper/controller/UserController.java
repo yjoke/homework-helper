@@ -42,6 +42,7 @@ public class UserController {
         return userInfoService.uploadInfo(userInfoDTO);
     }
 
+    // TODO 这里修改应该是 PUT, 前端也没来得及改
     @PostMapping("modify-phone")
     @ApiOperation("手机号换绑")
     public ApiResult<String> modifyPhone(@RequestBody LoginInfoVO loginInfoVO) {
@@ -49,6 +50,7 @@ public class UserController {
         return userInfoService.modifyPhone(loginInfoVO);
     }
 
+    // TODO 这里修改应该是 PUT, 前端也没来得及改
     @PostMapping("modify-password")
     @ApiOperation("修改密码")
     public ApiResult<String> modifyPassword(@RequestBody LoginInfoVO loginInfoVO) {
@@ -56,6 +58,7 @@ public class UserController {
         return userInfoService.modifyPassword(loginInfoVO);
     }
 
+    // TODO 这里弄成 DELETE 比较好
     @PostMapping("logout")
     @ApiOperation(value = "注销账户", notes = "此接口是用户注销自己的账户, 不是退出登录, 删除账户的后台数据")
     public ApiResult<String> logout(@RequestBody LoginInfoVO loginInfoVO) {

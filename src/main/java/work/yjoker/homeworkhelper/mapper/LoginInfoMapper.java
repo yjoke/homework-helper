@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface LoginInfoMapper extends BaseMapper<LoginInfo> {
 
-    Long selectIDByPhone(String phone);
+    Long selectIdByPhone(String phone);
 }
 
 
