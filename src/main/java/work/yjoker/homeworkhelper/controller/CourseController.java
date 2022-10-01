@@ -30,7 +30,7 @@ public class CourseController {
     @Resource
     private CourseInfoService courseInfoService;
 
-    @PostMapping
+    @PostMapping("created")
     @ApiOperation("创建新课程")
     public ApiResult<String> saveCourse(@RequestBody CourseInfoDTO courseInfoDTO) {
         log.info("手机号为 {} 的用户创建新课程 {}", Holder.get(PHONE_HOLDER), courseInfoDTO);
@@ -42,12 +42,6 @@ public class CourseController {
     public ApiResult<List<CourseInfoDTO>> created() {
         log.info("手机号为 {} 的用户获取自己创建的课程列表", Holder.get(PHONE_HOLDER));
         return courseInfoService.created();
-    }
-
-    @GetMapping("added")
-    @ApiOperation("获取自己加入的课程")
-    public ApiResult<List<CourseInfoDTO>> added() {
-        return ApiResult.error("接口未实现");
     }
 
     @GetMapping("{id}")
@@ -88,5 +82,18 @@ public class CourseController {
         return courseInfoService.modifyCode(id);
     }
 
+    @GetMapping("added")
+    @ApiOperation("获取自己加入的课程")
+    public ApiResult<List<CourseInfoDTO>> added() {
+        log.info("用户 {} 获取自己已加入课程", Holder.get(PHONE_HOLDER));
+        return courseInfoService.added();
+    }
+
+    @PostMapping("added/{code}")
+    @ApiModelProperty("加入课程")
+    public ApiResult<CourseInfoDTO> addedCourse(@PathVariable String code) {
+        log.info("用户 {} 加入课程 {}", Holder.get(PHONE_HOLDER), code);
+        return courseInfoService.addedCourse(code);
+    }
 
 }

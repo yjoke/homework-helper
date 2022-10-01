@@ -9,8 +9,6 @@ import javax.annotation.Resource;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author HeYunjia
  */
@@ -22,7 +20,7 @@ class CourseInfoMapperTest {
 
     @Test
     void selectDTOByCreateId() {
-        List<CourseInfoDTO> courseInfoDTOS = courseInfoMapper.selectDTOByCreateId(1568407709848563714L);
+        List<CourseInfoDTO> courseInfoDTOS = courseInfoMapper.selectCreatedDTOByCreateId(1568407709848563714L);
         System.out.println(courseInfoDTOS);
     }
 }

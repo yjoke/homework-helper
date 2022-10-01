@@ -11,7 +11,11 @@ import java.util.List;
  */
 public interface CourseInfoMapper extends BaseMapper<CourseInfo> {
 
-    List<CourseInfoDTO> selectDTOByCreateId(Long createId);
+    List<CourseInfoDTO> selectCreatedDTOByCreateId(Long createId);
+
+    List<CourseInfoDTO> selectAddedDTOByStudentId(Long studentId);
+
+    CourseInfoDTO selectDTOById(Long courseId);
 }
 
 

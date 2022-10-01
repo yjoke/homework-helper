@@ -23,4 +23,8 @@ public interface CourseInfoService extends IService<CourseInfo> {
     ApiResult<String> code(Long id);
 
     ApiResult<String> modifyCode(Long id);
+
+    ApiResult<CourseInfoDTO> addedCourse(String code);
+
+    ApiResult<List<CourseInfoDTO>> added();
 }

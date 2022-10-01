@@ -1,7 +1,9 @@
 package work.yjoker.homeworkhelper.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -9,10 +11,12 @@ import work.yjoker.homeworkhelper.common.wrapper.OssWrapper;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.CourseInfoDTO;
 import work.yjoker.homeworkhelper.entity.CourseInfo;
+import work.yjoker.homeworkhelper.entity.SelectCourse;
 import work.yjoker.homeworkhelper.mapper.LoginInfoMapper;
 import work.yjoker.homeworkhelper.service.CourseInfoService;
 import work.yjoker.homeworkhelper.mapper.CourseInfoMapper;
 import org.springframework.stereotype.Service;
+import work.yjoker.homeworkhelper.service.SelectCourseService;
 import work.yjoker.homeworkhelper.util.Holder;
 
 import javax.annotation.Resource;
@@ -36,6 +40,9 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
 
     @Resource
     private CourseInfoMapper courseInfoMapper;
+
+    @Resource
+    private SelectCourseService selectCourseService;
 
     @Resource
     private OssWrapper ossWrapper;
@@ -63,7 +70,7 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
 
         Long createId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
 
-        List<CourseInfoDTO> courseInfoDTOS = courseInfoMapper.selectDTOByCreateId(createId);
+        List<CourseInfoDTO> courseInfoDTOS = courseInfoMapper.selectCreatedDTOByCreateId(createId);
 
         courseInfoDTOS.forEach(info -> {
             String courseImg = info.getCourseImg();
@@ -99,7 +106,7 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
 
         Long createdId = loginInfoMapper.selectIdByPhone(phone);
 
-        // TODO 这里前端传来的数据没有创建者 id, 地址也是全部地址处理一下地址
+        // TODO 这里前端传来的数据没有创建者 id, 地址也是全部地址处理一下地址, 这里写的繁琐
         courseInfo.setCreateId(createdId);
 
         int length = ossWrapper.getUrlPrefix().length();
@@ -145,6 +152,64 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
         stringRedisTemplate.opsForValue().set(newCode, strId, 7, TimeUnit.DAYS);
 
         return ApiResult.success("code", newCode);
+    }
+
+    @Override
+    public ApiResult<List<CourseInfoDTO>> added() {
+
+        Long studentId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
+        List<CourseInfoDTO> courseInfoDTOS = courseInfoMapper.selectAddedDTOByStudentId(studentId);
+
+        courseInfoDTOS.forEach(info -> {
+            String courseImg = info.getCourseImg();
+            courseImg = ossWrapper.getUrlPrefix() + courseImg;
+            info.setCourseImg(courseImg);
+        });
+
+        return ApiResult.success(courseInfoDTOS);
+    }
+
+    @Override
+    public ApiResult<CourseInfoDTO> addedCourse(String code) {
+
+        // 判断邀请码是否过期
+        String courseId = stringRedisTemplate.opsForValue().get(code);
+        if (StrUtil.isEmpty(courseId)) return ApiResult.fail("课程不存在");
+
+        // 判断是否已经添加
+        Long studentId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
+        SelectCourse one = selectCourseService.lambdaQuery()
+                .eq(SelectCourse::getCourseId, courseId)
+                .eq(SelectCourse::getStudentId, studentId)
+                .one();
+
+        if (ObjectUtil.isNotNull(one)) return ApiResult.fail("已加入该课程");
+
+        // 判断是不是自己的课程
+        CourseInfo courseInfo = lambdaQuery()
+                .eq(CourseInfo::getId, courseId)
+                .one();
+
+        if (courseInfo.getCreateId().equals(studentId)) return ApiResult.fail("不可以加入自己的课程");
+
+        // 加入选课表
+        SelectCourse selectCourse = new SelectCourse();
+
+        selectCourse.setCourseId(Long.valueOf(courseId));
+        selectCourse.setStudentId(studentId);
+
+        if (!selectCourseService.save(selectCourse)) return ApiResult.fail("添加失败");
+
+        // 返回加入的课程的数据
+        CourseInfoDTO courseInfoDTO = courseInfoMapper.selectDTOById(courseInfo.getId());
+
+        String courseImg = courseInfoDTO.getCourseImg();
+        courseImg = ossWrapper.getUrlPrefix() + courseImg;
+        courseInfoDTO.setCourseImg(courseImg);
+
+        return ApiResult.success(courseInfoDTO);
     }
 
 }
