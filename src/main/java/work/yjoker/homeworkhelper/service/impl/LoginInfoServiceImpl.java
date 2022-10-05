@@ -6,7 +6,7 @@ import cn.hutool.http.Header;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import work.yjoker.homeworkhelper.common.JWTUtil;
+import work.yjoker.homeworkhelper.common.util.JWTUtil;
 import work.yjoker.homeworkhelper.common.wrapper.SmsWrapper;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.entity.LoginInfo;

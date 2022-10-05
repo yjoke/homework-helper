@@ -1,7 +1,6 @@
 package work.yjoker.homeworkhelper.controller;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -45,14 +44,14 @@ public class CourseController {
     }
 
     @GetMapping("{id}")
-    @ApiModelProperty("获取课程信息")
+    @ApiOperation("获取课程信息")
     public ApiResult<CourseInfoDTO> courseInfoDTO(@PathVariable Long id) {
         log.info("用户 {} 获取课程 {} 的信息", Holder.get(PHONE_HOLDER), id);
         return courseInfoService.courseInfoDTO(id);
     }
 
     @DeleteMapping("{id}")
-    @ApiModelProperty("删除课程信息")
+    @ApiOperation("删除课程信息")
     public ApiResult<String> removeCourse(@PathVariable Long id) {
         log.info("用户 {} 删除课程 {} 的信息", Holder.get(PHONE_HOLDER), id);
         // TODO 删除课程接口, 需要同时删除学生的添加信息 等, 后续完善
@@ -60,14 +59,14 @@ public class CourseController {
     }
 
     @PutMapping
-    @ApiModelProperty("修改课程信息")
+    @ApiOperation("修改课程信息")
     public ApiResult<String> modifyCourseInfo(@RequestBody CourseInfo courseInfo) {
         log.info("用户 {} 修改课程信息为 {}", Holder.get(PHONE_HOLDER), courseInfo);
         return courseInfoService.modifyCourseInfo(courseInfo);
     }
 
     @GetMapping("code/{id}")
-    @ApiModelProperty("获取课程邀请码")
+    @ApiOperation("获取课程邀请码")
     public ApiResult<String> code(@PathVariable Long id) {
         log.info("用户 {} 获取课程 {} 的邀请码", Holder.get(PHONE_HOLDER), id);
         // TODO 邀请码没有实现, 记得判断是否是课程主人
@@ -75,10 +74,9 @@ public class CourseController {
     }
 
     @PutMapping("code/{id}")
-    @ApiModelProperty("生成课程邀请码")
+    @ApiOperation("生成课程邀请码")
     public ApiResult<String> modifyCode(@PathVariable Long id) {
         log.info("用户 {} 获取课程 {} 的邀请码", Holder.get(PHONE_HOLDER), id);
-        // TODO 这里要对课程 id 和邀请码进行双向绑定
         return courseInfoService.modifyCode(id);
     }
 
@@ -90,7 +88,7 @@ public class CourseController {
     }
 
     @PostMapping("added/{code}")
-    @ApiModelProperty("加入课程")
+    @ApiOperation("加入课程")
     public ApiResult<CourseInfoDTO> addedCourse(@PathVariable String code) {
         log.info("用户 {} 加入课程 {}", Holder.get(PHONE_HOLDER), code);
         return courseInfoService.addedCourse(code);

@@ -1,4 +1,4 @@
-package work.yjoker.homeworkhelper.common;
+package work.yjoker.homeworkhelper.common.util;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;

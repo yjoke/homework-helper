@@ -2,11 +2,11 @@ package work.yjoker.homeworkhelper.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import work.yjoker.homeworkhelper.common.wrapper.InvitationCodeWrapper;
 import work.yjoker.homeworkhelper.common.wrapper.OssWrapper;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.CourseInfoDTO;
@@ -49,6 +49,9 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private InvitationCodeWrapper invitationCodeWrapper;
 
     @Override
     public ApiResult<String> saveCourse(CourseInfoDTO courseInfoDTO) {
@@ -135,18 +138,17 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
     }
 
     @Override
-    // TODO 没有做原子化操作, 没有去重,
+    // TODO 没有做双向绑定的原子化操作, 没有去重,
     public ApiResult<String> modifyCode(Long id) {
 
         String strId = String.valueOf(id);
 
-        String code = stringRedisTemplate.opsForValue()
-                .get(strId);
+        String code = stringRedisTemplate.opsForValue().get(strId);
         if (code != null) stringRedisTemplate.delete(code);
 
         stringRedisTemplate.delete(strId);
 
-        String newCode = RandomUtil.randomString(6);
+        String newCode = invitationCodeWrapper.getInvitationCode();
 
         stringRedisTemplate.opsForValue().set(strId, newCode, 7, TimeUnit.DAYS);
         stringRedisTemplate.opsForValue().set(newCode, strId, 7, TimeUnit.DAYS);
