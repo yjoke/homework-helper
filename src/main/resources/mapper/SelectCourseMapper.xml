@@ -20,4 +20,14 @@
         grade,gmt_create,gmt_modify,
         id_modify,is_deleted
     </sql>
+    <select id="selectStudentListByCourseId" resultType="work.yjoker.homeworkhelper.dto.UserInfoDTO">
+        SELECT l.phone, u.clazz, u.number, u.name, u.avatar
+            FROM login_info l
+                JOIN user_info u ON l.id = u.id
+            WHERE l.is_deleted = 0 AND l.id in (
+                SELECT s.student_id
+                    FROM select_course s JOIN course_info c ON s.course_id = c.id
+                    WHERE c.is_deleted = 0 AND c.id = #{courseId} AND c.create_id = #{createId}
+            );
+    </select>
 </mapper>

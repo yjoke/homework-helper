@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.CourseInfoDTO;
-import work.yjoker.homeworkhelper.entity.CourseInfo;
 import work.yjoker.homeworkhelper.service.CourseInfoService;
 import work.yjoker.homeworkhelper.util.Holder;
 
@@ -60,16 +59,15 @@ public class CourseController {
 
     @PutMapping
     @ApiOperation("修改课程信息")
-    public ApiResult<String> modifyCourseInfo(@RequestBody CourseInfo courseInfo) {
-        log.info("用户 {} 修改课程信息为 {}", Holder.get(PHONE_HOLDER), courseInfo);
-        return courseInfoService.modifyCourseInfo(courseInfo);
+    public ApiResult<String> modifyCourseInfo(@RequestBody CourseInfoDTO courseInfoDTO) {
+        log.info("用户 {} 修改课程信息为 {}", Holder.get(PHONE_HOLDER), courseInfoDTO);
+        return courseInfoService.modifyCourseInfo(courseInfoDTO);
     }
 
     @GetMapping("code/{id}")
     @ApiOperation("获取课程邀请码")
     public ApiResult<String> code(@PathVariable Long id) {
         log.info("用户 {} 获取课程 {} 的邀请码", Holder.get(PHONE_HOLDER), id);
-        // TODO 邀请码没有实现, 记得判断是否是课程主人
         return courseInfoService.code(id);
     }
 

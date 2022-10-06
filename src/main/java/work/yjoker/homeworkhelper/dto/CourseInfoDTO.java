@@ -1,5 +1,6 @@
 package work.yjoker.homeworkhelper.dto;
 
+import cn.hutool.core.bean.BeanUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -38,5 +39,22 @@ public class CourseInfoDTO {
         courseInfo.setCourseImg(this.getCourseImg().substring(urlPrefixLength));
 
         return courseInfo;
+    }
+
+    /**
+     * 将 entity 转换为 DTO
+     *
+     * @param courseInfo info 数据
+     * @param urlPrefix courseImg 的公共前缀
+     * @return 返回 courseInfoDTO
+     */
+    public static CourseInfoDTO toCourseInfoDTO(CourseInfo courseInfo, String urlPrefix) {
+        CourseInfoDTO courseInfoDTO = BeanUtil.copyProperties(courseInfo, CourseInfoDTO.class);
+
+        String courseImg = courseInfoDTO.getCourseImg();
+        courseImg = urlPrefix + courseImg;
+        courseInfoDTO.setCourseImg(courseImg);
+
+        return courseInfoDTO;
     }
 }

@@ -18,7 +18,7 @@ public interface CourseInfoService extends IService<CourseInfo> {
 
     ApiResult<CourseInfoDTO> courseInfoDTO(Long id);
 
-    ApiResult<String> modifyCourseInfo(CourseInfo courseInfo);
+    ApiResult<String> modifyCourseInfo(CourseInfoDTO courseInfoDTO);
 
     ApiResult<String> code(Long id);
 

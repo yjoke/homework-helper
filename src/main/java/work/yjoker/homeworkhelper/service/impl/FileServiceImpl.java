@@ -25,32 +25,43 @@ public class FileServiceImpl implements FileService {
     @Resource
     private OssWrapper ossWrapper;
 
-    /**
-     * 文件上传失败返回
-     */
-    private static final ApiResult<String> FAIL = ApiResult.fail("上传失败");
-
     @Override
     public ApiResult<String> saveAvatar(MultipartFile file) {
-
-        String filePath = saveFile(file, MAX_AVATAR_SIZE);
-
-        if (StrUtil.isEmpty(filePath)) return FAIL;
-
-        String avatarUrl = ossWrapper.getUrlPrefix() + filePath;
-
-        return ApiResult.success(AVATAR_PATH_KEY, avatarUrl);
+        return saveFileWrapper(file, MAX_AVATAR_SIZE, AVATAR_PATH_KEY);
     }
 
     @Override
     public ApiResult<String> saveCover(MultipartFile file) {
-        String filePath = saveFile(file, MAX_COVER_SIZE);
+        return saveFileWrapper(file, MAX_COVER_SIZE, COVER_PATH_KEY);
+    }
 
-        if (StrUtil.isEmpty(filePath)) return FAIL;
+    @Override
+    public ApiResult<String> saveCourseResource(MultipartFile file) {
+        return saveFileWrapper(file, MAX_RESOURCE_SIZE, RESOURCE_PATH_KEY);
+    }
 
-        String coverUrl = ossWrapper.getUrlPrefix() + filePath;
+    @Override
+    public ApiResult<String> saveHomework(MultipartFile file) {
+        return saveFileWrapper(file, MAX_HOMEWORK_SIZE, HOMEWORK_PATH_KEY);
+    }
 
-        return ApiResult.success(COVER_PATH_KEY, coverUrl);
+
+    /**
+     * 整合保存操作
+     *
+     * @param file 文件
+     * @param size 文件最大大小 Byte
+     * @param key 返回单位
+     * @return 返回前端数据
+     */
+    private ApiResult<String> saveFileWrapper(MultipartFile file, long size, String key) {
+        String filePath = saveFile(file, size);
+
+        if (StrUtil.isEmpty((filePath))) return ApiResult.fail("上传失败");
+
+        String resourceUrl = ossWrapper.getUrlPrefix() + filePath;
+
+        return ApiResult.success(key, resourceUrl);
     }
 
     /**

@@ -1,6 +1,5 @@
 package work.yjoker.homeworkhelper.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -94,28 +93,20 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
                 .eq(CourseInfo::getId, id)
                 .eq(CourseInfo::getCreateId, createdId)
                 .one();
+        if (courseInfo == null) return ApiResult.fail("课程不存在");
 
-        // TODO 这里直接默认课程存在了, 直接返回了
-        CourseInfoDTO courseInfoDTO = BeanUtil.copyProperties(courseInfo, CourseInfoDTO.class);
+        CourseInfoDTO courseInfoDTO = CourseInfoDTO.toCourseInfoDTO(courseInfo, ossWrapper.getUrlPrefix());
 
-        String courseImg = courseInfoDTO.getCourseImg();
-        courseInfoDTO.setCourseImg(ossWrapper.getUrlPrefix() + courseImg);
         return ApiResult.success(courseInfoDTO);
     }
 
     @Override
-    public ApiResult<String> modifyCourseInfo(CourseInfo courseInfo) {
+    public ApiResult<String> modifyCourseInfo(CourseInfoDTO courseInfoDTO) {
         String phone = Holder.get(PHONE_HOLDER);
 
         Long createdId = loginInfoMapper.selectIdByPhone(phone);
 
-        // TODO 这里前端传来的数据没有创建者 id, 地址也是全部地址处理一下地址, 这里写的繁琐
-        courseInfo.setCreateId(createdId);
-
-        int length = ossWrapper.getUrlPrefix().length();
-        String courseImg = courseInfo.getCourseImg();
-        courseImg = courseImg.substring(length);
-        courseInfo.setCourseImg(courseImg);
+        CourseInfo courseInfo = courseInfoDTO.toCourseInfo(createdId, ossWrapper.getUrlPrefix().length());
 
         boolean update = lambdaUpdate()
                 .eq(CourseInfo::getId, courseInfo.getId())

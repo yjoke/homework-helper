@@ -10,4 +10,8 @@ public interface FileService {
     ApiResult<String> saveAvatar(MultipartFile file);
 
     ApiResult<String> saveCover(MultipartFile file);
+
+    ApiResult<String> saveCourseResource(MultipartFile file);
+
+    ApiResult<String> saveHomework(MultipartFile file);
 }
