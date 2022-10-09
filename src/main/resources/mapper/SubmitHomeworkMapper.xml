@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="work.yjoker.homeworkhelper.mapper.SubmitHomeworkMapper">
+
+    <resultMap id="BaseResultMap" type="work.yjoker.homeworkhelper.entity.SubmitHomework">
+            <result property="id" column="id" jdbcType="BIGINT"/>
+            <result property="assignId" column="assign_id" jdbcType="BIGINT"/>
+            <result property="studentId" column="student_id" jdbcType="BIGINT"/>
+            <result property="resourceName" column="resource_name" jdbcType="VARCHAR"/>
+            <result property="resourceUrl" column="resource_url" jdbcType="VARCHAR"/>
+            <result property="resourceSize" column="resource_size" jdbcType="INTEGER"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+            <result property="idModify" column="id_modify" jdbcType="BIGINT"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,assign_id,student_id,
+        resource_name,resource_url,resource_size,
+        gmt_create,gmt_modify,id_modify,
+        is_deleted
+    </sql>
+</mapper>
