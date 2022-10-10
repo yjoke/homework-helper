@@ -34,6 +34,11 @@ public class AssignHomework implements Serializable {
     private String content;
 
     /**
+     * 作业的截止时间
+     */
+    private Date gmtExpire;
+
+    /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)

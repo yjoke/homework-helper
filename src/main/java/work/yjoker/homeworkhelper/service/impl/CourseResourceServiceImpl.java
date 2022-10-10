@@ -45,7 +45,7 @@ public class CourseResourceServiceImpl extends ServiceImpl<CourseResourceMapper,
     @Override
     public ApiResult<List<CourseResourceDTO>> dtoList(Long courseId) {
 
-        if (!hasPrivilege(Holder.get(PHONE_HOLDER), courseId)) {
+        if (!courseInfoService.hasPrivilege(Holder.get(PHONE_HOLDER), courseId)) {
             return ApiResult.fail("没有访问权限");
         }
 
@@ -68,7 +68,7 @@ public class CourseResourceServiceImpl extends ServiceImpl<CourseResourceMapper,
 
         Long userId = loginInfoMapper.selectIdByPhone(phone);
 
-        if (!isTeacher(userId, courseResourceVO.getCourseId())) {
+        if (!courseInfoService.isTeacher(userId, courseResourceVO.getCourseId())) {
             return ApiResult.fail("没有权限上传文件到该课程");
         }
 
@@ -79,54 +79,6 @@ public class CourseResourceServiceImpl extends ServiceImpl<CourseResourceMapper,
                 : ApiResult.fail("上传失败");
     }
 
-
-    /**
-     * 判断是否有权限访问资源列表
-     *
-     * @param phone 访问人手机号
-     * @param courseId 要获取的课程 id
-     * @return 有权限返回 true
-     */
-    private boolean hasPrivilege(String phone, Long courseId) {
-
-        Long userId = loginInfoMapper.selectIdByPhone(phone);
-
-        return isTeacher(userId, courseId) || isStudent(userId, courseId);
-    }
-
-    /**
-     * 判断是否是课程老师
-     *
-     * @param userId 访问用户
-     * @param courseId 课程 id
-     * @return 是 返回 true
-     */
-    private boolean isTeacher(Long userId, Long courseId) {
-
-        CourseInfo courseInfo = courseInfoService.lambdaQuery()
-                .eq(CourseInfo::getCreateId, userId)
-                .eq(CourseInfo::getId, courseId)
-                .one();
-
-        return courseInfo != null;
-    }
-
-    /**
-     * 判断是否是课程学生
-     *
-     * @param userId 访问用户
-     * @param courseId 课程 id
-     * @return 是 返回 true
-     */
-    private boolean isStudent(Long userId, Long courseId) {
-
-        SelectCourse selectCourse = selectCourseService.lambdaQuery()
-                .eq(SelectCourse::getStudentId, userId)
-                .eq(SelectCourse::getCourseId, courseId)
-                .one();
-
-        return selectCourse != null;
-    }
 }
 
 

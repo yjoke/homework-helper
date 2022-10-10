@@ -36,9 +36,9 @@ public class FileConstants {
     public static final String RESOURCE_PATH_KEY = "resource";
 
     /**
-     * 作业文件的最大值 50 MB
+     * 作业文件的最大值 100 MB
      */
-    public static final long MAX_HOMEWORK_SIZE = 50 * 1014 * 1024;
+    public static final long MAX_HOMEWORK_SIZE = 100 * 1014 * 1024;
 
     /**
      * 返回作业数据的 url 的 key
