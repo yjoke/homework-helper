@@ -29,14 +29,14 @@ public class CourseResourceController {
     private CourseResourceService courseResourceService;
 
     @PostMapping
-    @ApiOperation("上传资源信息")  // TODO 没有做测试
-    public ApiResult<String> saveCourseResource(CourseResourceVO courseResourceVO) {
-        log.info("用户 {} 上传资源信息", Holder.get(PHONE_HOLDER));
+    @ApiOperation("上传资源信息")
+    public ApiResult<CourseResourceDTO> saveCourseResource(@RequestBody CourseResourceVO courseResourceVO) {
+        log.info("用户 {} 上传资源信息 {}", Holder.get(PHONE_HOLDER), courseResourceVO);
         return courseResourceService.saveCourseResource(courseResourceVO);
     }
 
     @GetMapping("{courseId}")
-    @ApiOperation("获取资源列表")  // TODO 没有做测试
+    @ApiOperation("获取资源列表")
     public ApiResult<List<CourseResourceDTO>> dtoList(@PathVariable Long courseId) {
         log.info("用户 {} 获取资源列表", Holder.get(PHONE_HOLDER));
         return courseResourceService.dtoList(courseId);

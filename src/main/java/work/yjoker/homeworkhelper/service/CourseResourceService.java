@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface CourseResourceService extends IService<CourseResource> {
 
-    ApiResult<String> saveCourseResource(CourseResourceVO courseResourceVO);
+    ApiResult<CourseResourceDTO> saveCourseResource(CourseResourceVO courseResourceVO);
 
     ApiResult<List<CourseResourceDTO>> dtoList(Long courseId);
 }

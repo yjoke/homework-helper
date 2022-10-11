@@ -33,11 +33,11 @@ public class CourseResourceDTO {
     /**
      * Entity to DTO
      */
-    public static CourseResourceDTO toCourseResourceDTO(CourseResource courseResource, int urlPrefixLength) {
+    public static CourseResourceDTO toCourseResourceDTO(CourseResource courseResource, String urlPrefix) {
 
         CourseResourceDTO courseResourceDTO = BeanUtil.copyProperties(courseResource, CourseResourceDTO.class);
 
-        courseResourceDTO.setResourceUrl(courseResource.getResourceUrl().substring(urlPrefixLength));
+        courseResourceDTO.setResourceUrl(urlPrefix + courseResource.getResourceUrl());
 
         return courseResourceDTO;
     }

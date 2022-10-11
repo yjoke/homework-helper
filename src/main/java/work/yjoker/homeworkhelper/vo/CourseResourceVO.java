@@ -28,13 +28,13 @@ public class CourseResourceVO {
     /**
      * VO to Entity
      *
-     * @param urlPrefix url 前缀
+     * @param urlPrefixLength url 前缀长度
      */
-    public CourseResource toCourseResource(String urlPrefix) {
+    public CourseResource toCourseResource(int urlPrefixLength) {
 
         CourseResource courseResource = BeanUtil.copyProperties(this, CourseResource.class);
 
-        courseResource.setResourceUrl(urlPrefix + resourceUrl);
+        courseResource.setResourceUrl(resourceUrl.substring(urlPrefixLength));
 
         return courseResource;
     }

@@ -4,15 +4,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import work.yjoker.homeworkhelper.common.wrapper.OssWrapper;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.CourseResourceDTO;
-import work.yjoker.homeworkhelper.entity.CourseInfo;
 import work.yjoker.homeworkhelper.entity.CourseResource;
-import work.yjoker.homeworkhelper.entity.SelectCourse;
 import work.yjoker.homeworkhelper.mapper.LoginInfoMapper;
 import work.yjoker.homeworkhelper.service.CourseInfoService;
 import work.yjoker.homeworkhelper.service.CourseResourceService;
 import work.yjoker.homeworkhelper.mapper.CourseResourceMapper;
 import org.springframework.stereotype.Service;
-import work.yjoker.homeworkhelper.service.SelectCourseService;
 import work.yjoker.homeworkhelper.util.Holder;
 import work.yjoker.homeworkhelper.vo.CourseResourceVO;
 
@@ -37,9 +34,6 @@ public class CourseResourceServiceImpl extends ServiceImpl<CourseResourceMapper,
     private CourseInfoService courseInfoService;
 
     @Resource
-    private SelectCourseService selectCourseService;
-
-    @Resource
     private OssWrapper ossWrapper;
 
     @Override
@@ -55,14 +49,14 @@ public class CourseResourceServiceImpl extends ServiceImpl<CourseResourceMapper,
 
         List<CourseResourceDTO> dtoList = list.stream()
                 .map(entity ->
-                        CourseResourceDTO.toCourseResourceDTO(entity, ossWrapper.getUrlPrefix().length()))
+                        CourseResourceDTO.toCourseResourceDTO(entity, ossWrapper.getUrlPrefix()))
                 .collect(Collectors.toList());
 
         return ApiResult.success(dtoList);
     }
 
     @Override
-    public ApiResult<String> saveCourseResource(CourseResourceVO courseResourceVO) {
+    public ApiResult<CourseResourceDTO> saveCourseResource(CourseResourceVO courseResourceVO) {
 
         String phone = Holder.get(PHONE_HOLDER);
 
@@ -72,11 +66,14 @@ public class CourseResourceServiceImpl extends ServiceImpl<CourseResourceMapper,
             return ApiResult.fail("没有权限上传文件到该课程");
         }
 
-        CourseResource courseResource = courseResourceVO.toCourseResource(ossWrapper.getUrlPrefix());
+        CourseResource courseResource = courseResourceVO.toCourseResource(ossWrapper.getUrlPrefix().length());
 
-        return save(courseResource)
-                ? ApiResult.success("上传成功")
-                : ApiResult.fail("上传失败");
+        if (!save(courseResource)) return ApiResult.fail("上传失败");
+
+        CourseResourceDTO courseResourceDTO =
+                CourseResourceDTO.toCourseResourceDTO(courseResource, ossWrapper.getUrlPrefix());
+
+        return ApiResult.success(courseResourceDTO);
     }
 
 }

@@ -229,8 +229,8 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
     public boolean isTeacher(Long userId, Long courseId) {
 
         CourseInfo courseInfo = lambdaQuery()
-                .eq(CourseInfo::getCreateId, userId)
                 .eq(CourseInfo::getId, courseId)
+                .eq(CourseInfo::getCreateId, userId)
                 .one();
 
         return courseInfo != null;
