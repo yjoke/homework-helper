@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.AssignHomeworkDTO;
 import work.yjoker.homeworkhelper.entity.AssignHomework;
+import work.yjoker.homeworkhelper.mapper.LoginInfoMapper;
 import work.yjoker.homeworkhelper.service.AssignHomeworkService;
 import work.yjoker.homeworkhelper.mapper.AssignHomeworkMapper;
 import org.springframework.stereotype.Service;
@@ -29,17 +30,28 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
     @Resource
     private CourseInfoService courseInfoService;
 
+    @Resource
+    private LoginInfoMapper loginInfoMapper;
+
     @Override
     @Transactional
-    public ApiResult<String> assignHomework(AssignHomeworkVO assignHomeworkVO) {
+    public ApiResult<AssignHomeworkDTO> assignHomework(AssignHomeworkVO assignHomeworkVO) {
 
-        if (!courseInfoService.hasPrivilege(Holder.get(PHONE_HOLDER), assignHomeworkVO.getCourseId())) {
+        Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
+        if (!courseInfoService.isTeacher(userId, assignHomeworkVO.getCourseId())) {
             return ApiResult.fail("没有权限添加作业");
         }
 
-        return save(assignHomeworkVO.toAssignHomework())
-                ? ApiResult.fail("上传失败")
-                : ApiResult.success("发布成功");
+        AssignHomework entity = assignHomeworkVO.toAssignHomework();
+        if (!save(entity)) ApiResult.fail("添加失败");
+
+        entity = lambdaQuery()
+                .eq(AssignHomework::getId, entity.getId())
+                .one();
+        AssignHomeworkDTO assignHomeworkDTO = AssignHomeworkDTO.toAssignHomeworkDTO(entity);
+
+        return ApiResult.success(assignHomeworkDTO);
     }
 
     @Override
@@ -49,9 +61,10 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
                 .eq(AssignHomework::getId, homeworkId)
                 .one();
 
-        if (info == null ||
-                !courseInfoService.hasPrivilege(Holder.get(PHONE_HOLDER), info.getCourseId())) {
-            return ApiResult.fail("没有权限添加作业");
+        Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
+        if (info == null || !courseInfoService.isTeacher(userId, info.getCourseId())) {
+            return ApiResult.fail("没有权限删除作业");
         }
 
         return removeById(homeworkId)
@@ -66,10 +79,12 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
                 .eq(AssignHomework::getId, homeworkId)
                 .one();
 
+        Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
         if (info == null
                 || !info.getCourseId().equals(assignHomeworkVO.getCourseId())
-                || !courseInfoService.hasPrivilege(Holder.get(PHONE_HOLDER), info.getCourseId())) {
-            return ApiResult.fail("没有权限修改作业");
+                || !courseInfoService.isTeacher(userId, info.getCourseId())) {
+            return ApiResult.fail("没有权限修改该作业");
         }
 
         AssignHomework assignHomework = assignHomeworkVO.toAssignHomework();
@@ -83,7 +98,9 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
     @Override
     public ApiResult<List<AssignHomeworkDTO>> assignList(Long courseId) {
 
-        if (!courseInfoService.hasPrivilege(Holder.get(PHONE_HOLDER), courseId)) {
+        Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
+        if (!courseInfoService.isTeacher(userId, courseId)) {
             return ApiResult.fail("没有权限获取数据");
         }
 
@@ -110,8 +127,10 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
                 .eq(AssignHomework::getId, homeworkId)
                 .one();
 
+        Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
         if (info == null ||
-                !courseInfoService.hasPrivilege(Holder.get(PHONE_HOLDER), info.getCourseId())) {
+                !courseInfoService.isTeacher(userId, info.getCourseId())) {
             return ApiResult.fail("没有权限进行操作");
         }
 
@@ -120,6 +139,35 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
         return updateById(info)
                 ? ApiResult.success("操作成功")
                 : ApiResult.fail("操作失败");
+    }
+
+    /**
+     * 判断用户是否是该作业的老师
+     *
+     * @param userId 用户 id
+     * @param homeworkId 作业 id
+     */
+    public boolean isTeacher(Long userId, Long homeworkId) {
+        AssignHomework info = lambdaQuery()
+                .eq(AssignHomework::getId, homeworkId)
+                .one();
+
+        return info != null && courseInfoService.isTeacher(userId, info.getCourseId());
+    }
+
+    /**
+     * 判断用户是否是该作业的学生
+     *
+     * @param userId 用户 id
+     * @param homeworkId 作业 id
+     * @return 是返回 true
+     */
+    public boolean isStudent(Long userId, Long homeworkId) {
+        AssignHomework info = lambdaQuery()
+                .eq(AssignHomework::getId, homeworkId)
+                .one();
+
+        return info != null && courseInfoService.isStudent(userId, info.getCourseId());
     }
 }
 

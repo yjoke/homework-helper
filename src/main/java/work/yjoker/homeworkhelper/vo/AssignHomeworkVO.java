@@ -19,7 +19,7 @@ public class AssignHomeworkVO {
     private Long courseId;
 
     @ApiModelProperty("作业标题")
-    private Long title;
+    private String title;
 
     @ApiModelProperty("作业的文本内容")
     private String content;

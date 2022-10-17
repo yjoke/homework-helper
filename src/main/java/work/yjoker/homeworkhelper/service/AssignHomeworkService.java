@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface AssignHomeworkService extends IService<AssignHomework> {
 
-    ApiResult<String> assignHomework(AssignHomeworkVO assignHomeworkVO);
+    ApiResult<AssignHomeworkDTO> assignHomework(AssignHomeworkVO assignHomeworkVO);
 
     ApiResult<String> removeHomework(Long homeworkId);
 
@@ -25,4 +25,8 @@ public interface AssignHomeworkService extends IService<AssignHomework> {
     ApiResult<String> closeSubmit(Long homeworkId);
 
     ApiResult<String> openHomework(Long homeworkId, Date expireTime);
+
+    boolean isTeacher(Long userId, Long homeworkId);
+
+    boolean isStudent(Long userId, Long homeworkId);
 }

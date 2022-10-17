@@ -31,7 +31,7 @@ public class AssignHomeworkController {
 
     @PostMapping
     @ApiOperation("发布新作业")
-    public ApiResult<String> assignHomework(@RequestBody AssignHomeworkVO assignHomeworkVO) {
+    public ApiResult<AssignHomeworkDTO> assignHomework(@RequestBody AssignHomeworkVO assignHomeworkVO) {
         log.info("用户 {} 发布新作业 {}", Holder.get(PHONE_HOLDER), assignHomeworkVO);
         return assignHomeworkService.assignHomework(assignHomeworkVO);
     }

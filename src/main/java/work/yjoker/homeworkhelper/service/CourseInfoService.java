@@ -28,7 +28,9 @@ public interface CourseInfoService extends IService<CourseInfo> {
 
     ApiResult<List<CourseInfoDTO>> added();
 
-    boolean hasPrivilege(String s, Long courseId);
+    boolean hasPrivilege(Long userId, Long courseId);
 
     boolean isTeacher(Long userId, Long courseId);
+
+    boolean isStudent(Long userId, Long courseId);
 }

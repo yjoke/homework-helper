@@ -39,7 +39,9 @@ public class CourseResourceServiceImpl extends ServiceImpl<CourseResourceMapper,
     @Override
     public ApiResult<List<CourseResourceDTO>> dtoList(Long courseId) {
 
-        if (!courseInfoService.hasPrivilege(Holder.get(PHONE_HOLDER), courseId)) {
+        Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
+        if (!courseInfoService.hasPrivilege(userId, courseId)) {
             return ApiResult.fail("没有访问权限");
         }
 

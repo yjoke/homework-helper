@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import java.util.List;
 
 /**
- * @Entity work.yjoker.homeworkhelper.entity.SelectCourse
+ * work.yjoker.homeworkhelper.entity.SelectCourse
  */
 public interface SelectCourseMapper extends BaseMapper<SelectCourse> {
 

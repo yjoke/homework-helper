@@ -23,4 +23,10 @@
         gmt_create,gmt_modify,id_modify,
         is_deleted
     </sql>
+    <select id="selectDTOById" resultType="work.yjoker.homeworkhelper.dto.SubmitHomeworkDTO">
+        SELECT u.clazz AS student_clazz, u.number AS student_number, u.name AS stuednt_name
+                s.resource_name, s.resource_url, s.resource_size
+            FROM submit_homework s JOIN user_info u ON s.student_id = user_id
+            WHERE s.isDeleted = 0 AND s.assign_id = #{homeworkId}
+    </select>
 </mapper>

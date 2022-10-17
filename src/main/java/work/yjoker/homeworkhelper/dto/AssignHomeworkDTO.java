@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import work.yjoker.homeworkhelper.entity.AssignHomework;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -19,21 +21,29 @@ public class AssignHomeworkDTO {
     private Long homeworkId;
 
     @ApiModelProperty("作业标题")
-    private Long title;
+    private String title;
 
     @ApiModelProperty("作业的文本内容")
     private String content;
 
     @ApiModelProperty("作业的发布时间")
-    private Date gmtCreate;
+    private String gmtCreate;
 
     @ApiModelProperty("作业的截止时间")
-    private Date gmtExpire;
+    private String gmtExpire;
 
     /**
      * Entity to DTO
      */
     public static AssignHomeworkDTO toAssignHomeworkDTO(AssignHomework assignHomework) {
-        return BeanUtil.copyProperties(assignHomework, AssignHomeworkDTO.class);
+        AssignHomeworkDTO assignHomeworkDTO = BeanUtil.copyProperties(assignHomework, AssignHomeworkDTO.class);
+
+        assignHomeworkDTO.setHomeworkId(assignHomework.getId());
+        assignHomeworkDTO.setGmtCreate(format.format(assignHomework.getGmtCreate()));
+        assignHomeworkDTO.setGmtExpire(format.format(assignHomework.getGmtExpire()));
+
+        return assignHomeworkDTO;
     }
+
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 }

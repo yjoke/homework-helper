@@ -26,7 +26,7 @@ public class AssignHomework implements Serializable {
     /**
      * 作业标题
      */
-    private Long title;
+    private String title;
 
     /**
      * 作业的文本内容

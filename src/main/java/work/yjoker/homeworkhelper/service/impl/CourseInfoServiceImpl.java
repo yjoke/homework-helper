@@ -57,7 +57,6 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
 
         Long createId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
 
-
         CourseInfo courseInfo = courseInfoDTO.toCourseInfo(createId, ossWrapper.getUrlPrefix().length());
 
         boolean save = save(courseInfo);
@@ -208,14 +207,11 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
     /**
      * 判断是否有权限访问资源列表
      *
-     * @param phone 访问人手机号
+     * @param userId 访问人 id
      * @param courseId 要获取的课程 id
      * @return 有权限返回 true
      */
-    public boolean hasPrivilege(String phone, Long courseId) {
-
-        Long userId = loginInfoMapper.selectIdByPhone(phone);
-
+    public boolean hasPrivilege(Long userId, Long courseId) {
         return isTeacher(userId, courseId) || isStudent(userId, courseId);
     }
 
