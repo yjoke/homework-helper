@@ -19,6 +19,8 @@ public class HomeworkHelperApplication {
     public static void main(String[] args) {
         SpringApplication.run(HomeworkHelperApplication.class, args);
         log.info("******** 项目启动成功 ********");
+        // TODO 重构代码结构, 取消所有的 service 层互相调用, 使用 mapper 实现需要调用的 service 层逻辑
+        log.info("代码 service 层存在循环引用, 默认不推荐这么使用, 现在强制使用了");
     }
 
 }

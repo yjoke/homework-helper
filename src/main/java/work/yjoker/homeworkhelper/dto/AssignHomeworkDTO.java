@@ -5,11 +5,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import work.yjoker.homeworkhelper.entity.AssignHomework;
+import work.yjoker.homeworkhelper.entity.SubmitHomework;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 /**
  * @author HeYunjia
  */
@@ -32,6 +30,35 @@ public class AssignHomeworkDTO {
     @ApiModelProperty("作业的截止时间")
     private String gmtExpire;
 
+    @ApiModelProperty("是否已经截止")
+    private boolean isExpired;
+
+    @ApiModelProperty("是否提交")
+    private boolean isSubmitted;
+
+    @ApiModelProperty("作业文件名")
+    private String homeworkFileName;
+
+    @ApiModelProperty("作业地址")
+    private String homeworkFileUrl;
+
+    /**
+     * 判断作业是否提交
+     *
+     * @return 返回 this
+     */
+    public AssignHomeworkDTO setHomework(SubmitHomework submitHomework) {
+        if (submitHomework == null) {
+            this.setSubmitted(false);
+        } else {
+            this.setSubmitted(true);
+            this.setHomeworkFileName(submitHomework.getResourceName());
+            this.setHomeworkFileUrl(submitHomework.getResourceUrl());
+        }
+
+        return this;
+    }
+
     /**
      * Entity to DTO
      */
@@ -41,6 +68,7 @@ public class AssignHomeworkDTO {
         assignHomeworkDTO.setHomeworkId(assignHomework.getId());
         assignHomeworkDTO.setGmtCreate(format.format(assignHomework.getGmtCreate()));
         assignHomeworkDTO.setGmtExpire(format.format(assignHomework.getGmtExpire()));
+        assignHomeworkDTO.setExpired(assignHomework.getGmtExpire().getTime() - System.currentTimeMillis() <= 0);
 
         return assignHomeworkDTO;
     }

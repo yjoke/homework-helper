@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import work.yjoker.homeworkhelper.entity.CourseResource;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -28,7 +29,7 @@ public class CourseResourceDTO {
     private Integer resourceSize;
 
     @ApiModelProperty("上传时间")
-    private Date gmtCreate;
+    private String gmtCreate;
 
     /**
      * Entity to DTO
@@ -38,7 +39,10 @@ public class CourseResourceDTO {
         CourseResourceDTO courseResourceDTO = BeanUtil.copyProperties(courseResource, CourseResourceDTO.class);
 
         courseResourceDTO.setResourceUrl(urlPrefix + courseResource.getResourceUrl());
+        courseResourceDTO.setGmtCreate(format.format(courseResource.getGmtCreate()));
 
         return courseResourceDTO;
     }
+
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 }

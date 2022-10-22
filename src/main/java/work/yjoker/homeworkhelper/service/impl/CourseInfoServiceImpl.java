@@ -82,15 +82,16 @@ public class CourseInfoServiceImpl extends ServiceImpl<CourseInfoMapper, CourseI
         return ApiResult.success(courseInfoDTOS);
     }
 
-    @Override
+    @Override  // TODO, 做了修改, 还未做测试
     public ApiResult<CourseInfoDTO> courseInfoDTO(Long id) {
         String phone = Holder.get(PHONE_HOLDER);
-        Long createdId = loginInfoMapper.selectIdByPhone(phone);
-        if (createdId == null) return ApiResult.fail(NOT_LOGIN);
+        Long userId = loginInfoMapper.selectIdByPhone(phone);
+        if (userId == null) return ApiResult.fail(NOT_LOGIN);
+
+        if (!hasPrivilege(userId, id)) return ApiResult.fail("没有权限访问该课程");
 
         CourseInfo courseInfo = lambdaQuery()
                 .eq(CourseInfo::getId, id)
-                .eq(CourseInfo::getCreateId, createdId)
                 .one();
         if (courseInfo == null) return ApiResult.fail("课程不存在");
 

@@ -5,11 +5,13 @@ import org.springframework.transaction.annotation.Transactional;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.AssignHomeworkDTO;
 import work.yjoker.homeworkhelper.entity.AssignHomework;
+import work.yjoker.homeworkhelper.entity.SubmitHomework;
 import work.yjoker.homeworkhelper.mapper.LoginInfoMapper;
 import work.yjoker.homeworkhelper.service.AssignHomeworkService;
 import work.yjoker.homeworkhelper.mapper.AssignHomeworkMapper;
 import org.springframework.stereotype.Service;
 import work.yjoker.homeworkhelper.service.CourseInfoService;
+import work.yjoker.homeworkhelper.service.SubmitHomeworkService;
 import work.yjoker.homeworkhelper.util.Holder;
 import work.yjoker.homeworkhelper.vo.AssignHomeworkVO;
 
@@ -29,6 +31,9 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
 
     @Resource
     private CourseInfoService courseInfoService;
+
+    @Resource
+    private SubmitHomeworkService submitHomeworkService;
 
     @Resource
     private LoginInfoMapper loginInfoMapper;
@@ -100,7 +105,7 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
 
         Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
 
-        if (!courseInfoService.isTeacher(userId, courseId)) {
+        if (!courseInfoService.hasPrivilege(userId, courseId)) {
             return ApiResult.fail("没有权限获取数据");
         }
 
@@ -108,8 +113,19 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
                 .eq(AssignHomework::getCourseId, courseId)
                 .list();
 
+        // TODO 这里应该可以进行一个重构, 看着嵌套有点深了
         List<AssignHomeworkDTO> dtoList = list.stream()
-                .map(AssignHomeworkDTO::toAssignHomeworkDTO)
+                .map((entity) -> {
+                    AssignHomeworkDTO assignHomeworkDTO = AssignHomeworkDTO.toAssignHomeworkDTO(entity);
+
+                    // TODO 这里没有处理 url 的前缀
+                    SubmitHomework submitInfo = submitHomeworkService.lambdaQuery()
+                            .eq(SubmitHomework::getAssignId, entity.getId())
+                            .eq(SubmitHomework::getStudentId, userId)
+                            .one();
+
+                    return assignHomeworkDTO.setHomework(submitInfo);
+                })
                 .collect(Collectors.toList());
 
         return ApiResult.success(dtoList);
