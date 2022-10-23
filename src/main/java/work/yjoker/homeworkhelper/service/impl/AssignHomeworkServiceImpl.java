@@ -2,6 +2,7 @@ package work.yjoker.homeworkhelper.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
+import work.yjoker.homeworkhelper.common.wrapper.OssWrapper;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.AssignHomeworkDTO;
 import work.yjoker.homeworkhelper.entity.AssignHomework;
@@ -37,6 +38,9 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
 
     @Resource
     private LoginInfoMapper loginInfoMapper;
+
+    @Resource
+    private OssWrapper ossWrapper;
 
     @Override
     @Transactional
@@ -124,7 +128,7 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
                             .eq(SubmitHomework::getStudentId, userId)
                             .one();
 
-                    return assignHomeworkDTO.setHomework(submitInfo);
+                    return assignHomeworkDTO.setHomework(submitInfo, ossWrapper.getUrlPrefix());
                 })
                 .collect(Collectors.toList());
 

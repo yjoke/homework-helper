@@ -47,13 +47,13 @@ public class AssignHomeworkDTO {
      *
      * @return 返回 this
      */
-    public AssignHomeworkDTO setHomework(SubmitHomework submitHomework) {
+    public AssignHomeworkDTO setHomework(SubmitHomework submitHomework, String urlPrefix) {
         if (submitHomework == null) {
             this.setSubmitted(false);
         } else {
             this.setSubmitted(true);
             this.setHomeworkFileName(submitHomework.getResourceName());
-            this.setHomeworkFileUrl(submitHomework.getResourceUrl());
+            this.setHomeworkFileUrl(urlPrefix + submitHomework.getResourceUrl());
         }
 
         return this;
