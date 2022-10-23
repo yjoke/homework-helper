@@ -28,5 +28,5 @@ public interface AssignHomeworkService extends IService<AssignHomework> {
 
     boolean isTeacher(Long userId, Long homeworkId);
 
-    boolean isStudent(Long userId, Long homeworkId);
+    boolean hasPrivilege(Long userId, Long homeworkId);
 }

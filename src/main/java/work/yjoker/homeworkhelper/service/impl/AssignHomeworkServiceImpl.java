@@ -176,18 +176,20 @@ public class AssignHomeworkServiceImpl extends ServiceImpl<AssignHomeworkMapper,
     }
 
     /**
-     * 判断用户是否是该作业的学生
+     * 判断用户是否有权限提交该作业
      *
      * @param userId 用户 id
      * @param homeworkId 作业 id
      * @return 是返回 true
      */
-    public boolean isStudent(Long userId, Long homeworkId) {
+    public boolean hasPrivilege(Long userId, Long homeworkId) {
         AssignHomework info = lambdaQuery()
                 .eq(AssignHomework::getId, homeworkId)
                 .one();
 
-        return info != null && courseInfoService.isStudent(userId, info.getCourseId());
+        return info != null
+                && info.getGmtExpire().getTime() > System.currentTimeMillis()
+                && courseInfoService.isStudent(userId, info.getCourseId());
     }
 }
 

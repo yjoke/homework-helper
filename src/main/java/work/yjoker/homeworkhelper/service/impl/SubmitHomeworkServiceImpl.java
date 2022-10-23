@@ -1,6 +1,7 @@
 package work.yjoker.homeworkhelper.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 import work.yjoker.homeworkhelper.common.wrapper.OssWrapper;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.SubmitHomeworkDTO;
@@ -39,14 +40,25 @@ public class SubmitHomeworkServiceImpl extends ServiceImpl<SubmitHomeworkMapper,
     @Resource
     private OssWrapper ossWrapper;
 
+    public static final int isDeleted = 1;
+    public static final int notDeleted = 0;
+
     @Override
+    @Transactional
     public ApiResult<String> submitHomework(SubmitHomeworkVO submitHomeworkVO) {
 
         Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
 
-        if (!assignHomeworkService.isStudent(userId, submitHomeworkVO.getAssignId())) {
+        if (!assignHomeworkService.hasPrivilege(userId, submitHomeworkVO.getAssignId())) {
             return ApiResult.fail("没有权限提交作业");
         }
+
+        lambdaUpdate()
+                .eq(SubmitHomework::getAssignId, submitHomeworkVO.getAssignId())
+                .eq(SubmitHomework::getStudentId, userId)
+                .eq(SubmitHomework::getIsDeleted, notDeleted)
+                .set(SubmitHomework::getIsDeleted, isDeleted)
+                .update();
 
         SubmitHomework submitHomework = submitHomeworkVO.toSubmitHomework(userId, ossWrapper.getUrlPrefix().length());
 
