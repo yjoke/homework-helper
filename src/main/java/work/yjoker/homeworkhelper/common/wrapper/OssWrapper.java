@@ -58,6 +58,20 @@ public class OssWrapper {
     }
 
     /**
+     * 获取指定文件的输入流
+     *
+     * @param fileName 文件名
+     * @return 返回文件的输入流
+     */
+    public InputStream downFile(String fileName) {
+        try {
+            return oss.getObject(bucketName, basePath + fileName).getObjectContent();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
      * 获取文件地址前缀
      */
     public String getUrlPrefix() {

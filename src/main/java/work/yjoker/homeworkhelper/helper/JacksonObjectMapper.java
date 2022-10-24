@@ -1,4 +1,4 @@
-package work.yjoker.homeworkhelper.common;
+package work.yjoker.homeworkhelper.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
