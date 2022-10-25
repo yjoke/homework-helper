@@ -84,7 +84,6 @@ public class SubmitHomeworkServiceImpl extends ServiceImpl<SubmitHomeworkMapper,
 
         dtoList.forEach(info -> info.refactorURL(ossWrapper.getUrlPrefix()));
         dtoList.forEach(SubmitHomeworkDTO::refactorInfo);
-        dtoList.forEach(SubmitHomeworkDTO::refactorName);
 
         return ApiResult.success(dtoList);
     }
@@ -140,7 +139,7 @@ public class SubmitHomeworkServiceImpl extends ServiceImpl<SubmitHomeworkMapper,
             InputStream zipInput = zipStreamCatch.getInputStream();
             String zipUrl = ossWrapper.saveFile(zipInput, zipInput.available(), MemoryUnit.BYTE, ".zip");
 
-            return ApiResult.success("zipUrl", zipUrl);
+            return ApiResult.success("zipUrl", ossWrapper.getUrlPrefix() + zipUrl);
         } catch (IOException e) {
             return ApiResult.error("服务器发生异常, 请稍后重试");
         }

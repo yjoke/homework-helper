@@ -24,7 +24,7 @@ class HomeworkHelperApplicationTests {
 
     @Test
     void contextLoads() {
-        System.out.println(ossWrapper.getUrlPrefix());
+//        System.out.println(ossWrapper.getUrlPrefix());
 //        System.out.println(invitationCodeWrapper.getInvitationCode());
     }
 
@@ -34,32 +34,32 @@ class HomeworkHelperApplicationTests {
     @SneakyThrows
     @Test
     void testRedisMQ() {
-        RedisMQ<String> redisMQ = new RedisMQ<>("testKey", String.class);
-
-        redisMQ.setStringRedisTemplate(stringRedisTemplate);
-
-        redisMQ.create();
-
-        for (int i = 0; i < 10; i++) {
-            redisMQ.offer("test" + i);
-        }
-        System.out.println("数据录入结束");
-        Thread.sleep(10000);
-
-        while (!redisMQ.isEmpty()) {
-            RedisMQResult<String> poll = redisMQ.poll();
-            if (poll == null) break;
-            System.out.print(poll.getValue() + " ");
-            boolean ack = redisMQ.ack(poll);
-
-            System.out.println(ack);
-        }
+//        RedisMQ<String> redisMQ = new RedisMQ<>("testKey", String.class);
+//
+//        redisMQ.setStringRedisTemplate(stringRedisTemplate);
+//
+//        redisMQ.create();
+//
+//        for (int i = 0; i < 10; i++) {
+//            redisMQ.offer("test" + i);
+//        }
+//        System.out.println("数据录入结束");
+//        Thread.sleep(10000);
+//
+//        while (!redisMQ.isEmpty()) {
+//            RedisMQResult<String> poll = redisMQ.poll();
+//            if (poll == null) break;
+//            System.out.print(poll.getValue() + " ");
+//            boolean ack = redisMQ.ack(poll);
+//
+//            System.out.println(ack);
+//        }
     }
 
     @Test
     void testValue() {
 
-        stringRedisTemplate.opsForValue()
-                .set("name", "addName");
+//        stringRedisTemplate.opsForValue()
+//                .set("name", "addName");
     }
 }

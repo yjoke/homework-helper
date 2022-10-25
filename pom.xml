@@ -10,7 +10,7 @@
     </parent>
     <groupId>work.yjoker</groupId>
     <artifactId>homework-helper</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.1</version>
     <name>homework-helper</name>
     <description>Web practical training course design</description>
     <properties>
