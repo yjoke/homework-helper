@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import work.yjoker.homeworkhelper.common.mq.RedisMQ;
 import work.yjoker.homeworkhelper.common.mq.RedisMQResult;
 import work.yjoker.homeworkhelper.common.wrapper.InvitationCodeWrapper;
+import work.yjoker.homeworkhelper.common.wrapper.OssWrapper;
 
 import javax.annotation.Resource;
 
@@ -18,9 +19,13 @@ class HomeworkHelperApplicationTests {
     @Resource
     private InvitationCodeWrapper invitationCodeWrapper;
 
+    @Resource
+    private OssWrapper ossWrapper;
+
     @Test
     void contextLoads() {
-        System.out.println(invitationCodeWrapper.getInvitationCode());
+        System.out.println(ossWrapper.getUrlPrefix());
+//        System.out.println(invitationCodeWrapper.getInvitationCode());
     }
 
     @Resource

@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.SubmitHomeworkDTO;
-import work.yjoker.homeworkhelper.entity.SubmitHomework;
 import work.yjoker.homeworkhelper.service.SubmitHomeworkService;
 import work.yjoker.homeworkhelper.vo.SubmitHomeworkVO;
 
@@ -32,9 +31,21 @@ public class SubmitHomeworkController {
         return submitHomeworkService.submitHomework(submitHomeworkVO);
     }
 
-    @GetMapping("{homeworkId}")
-    @ApiOperation("作业的已提交的作业列表")
+    @GetMapping("has/{homeworkId}")
+    @ApiOperation("已提交作业的学生列表")
     public ApiResult<List<SubmitHomeworkDTO>> submittedList(@PathVariable Long homeworkId) {
         return submitHomeworkService.submittedList(homeworkId);
+    }
+
+    @GetMapping("not/{homeworkId}")
+    @ApiOperation("未提交作业的学生列表")
+    public ApiResult<List<SubmitHomeworkDTO>> notSubmittedList(@PathVariable Long homeworkId) {
+        return submitHomeworkService.notSubmittedList(homeworkId);
+    }
+
+    @GetMapping("{homeworkId}")
+    @ApiOperation("下载作业的压缩文件")
+    public ApiResult<String> zipFile(@PathVariable Long homeworkId) {
+        return submitHomeworkService.zipFile(homeworkId);
     }
 }

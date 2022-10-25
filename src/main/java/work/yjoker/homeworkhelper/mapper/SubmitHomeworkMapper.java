@@ -11,7 +11,9 @@ import java.util.List;
  */
 public interface SubmitHomeworkMapper extends BaseMapper<SubmitHomework> {
 
-    List<SubmitHomeworkDTO> selectDTOById(Long homeworkId);
+    List<SubmitHomeworkDTO> selectSubmitDTOListByHomeworkId(Long homeworkId);
+
+    List<SubmitHomeworkDTO> selectNotSubmitDTOListByHomeworkId(Long homeworkId);
 }
 
 

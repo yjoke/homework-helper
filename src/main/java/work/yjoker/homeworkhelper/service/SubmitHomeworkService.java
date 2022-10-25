@@ -16,4 +16,8 @@ public interface SubmitHomeworkService extends IService<SubmitHomework> {
     ApiResult<String> submitHomework(SubmitHomeworkVO submitHomeworkVO);
 
     ApiResult<List<SubmitHomeworkDTO>> submittedList(Long homeworkId);
+
+    ApiResult<List<SubmitHomeworkDTO>> notSubmittedList(Long homeworkId);
+
+    ApiResult<String> zipFile(Long homeworkId);
 }

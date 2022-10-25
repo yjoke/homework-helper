@@ -6,17 +6,21 @@ import work.yjoker.homeworkhelper.common.wrapper.OssWrapper;
 import work.yjoker.homeworkhelper.dto.ApiResult;
 import work.yjoker.homeworkhelper.dto.SubmitHomeworkDTO;
 import work.yjoker.homeworkhelper.entity.SubmitHomework;
+import work.yjoker.homeworkhelper.helper.ZipStreamCatch;
 import work.yjoker.homeworkhelper.mapper.LoginInfoMapper;
 import work.yjoker.homeworkhelper.service.AssignHomeworkService;
-import work.yjoker.homeworkhelper.service.CourseInfoService;
 import work.yjoker.homeworkhelper.service.SubmitHomeworkService;
 import work.yjoker.homeworkhelper.mapper.SubmitHomeworkMapper;
 import org.springframework.stereotype.Service;
 import work.yjoker.homeworkhelper.util.Holder;
+import work.yjoker.homeworkhelper.util.MemoryUnit;
 import work.yjoker.homeworkhelper.vo.SubmitHomeworkVO;
 
 import javax.annotation.Resource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import static work.yjoker.homeworkhelper.util.Holder.PHONE_HOLDER;
@@ -73,14 +77,74 @@ public class SubmitHomeworkServiceImpl extends ServiceImpl<SubmitHomeworkMapper,
         Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
 
         if (!assignHomeworkService.isTeacher(userId, homeworkId)) {
-            return ApiResult.fail("没有权限查看该作业提交列表");
+            return ApiResult.fail("没有权限");
         }
 
-        List<SubmitHomeworkDTO> dtoList = submitHomeworkMapper.selectDTOById(homeworkId);
+        List<SubmitHomeworkDTO> dtoList = submitHomeworkMapper.selectSubmitDTOListByHomeworkId(homeworkId);
 
-        return null;
+        dtoList.forEach(info -> info.refactorURL(ossWrapper.getUrlPrefix()));
+        dtoList.forEach(SubmitHomeworkDTO::refactorInfo);
+        dtoList.forEach(SubmitHomeworkDTO::refactorName);
+
+        return ApiResult.success(dtoList);
     }
 
+    @Override
+    public ApiResult<List<SubmitHomeworkDTO>> notSubmittedList(Long homeworkId) {
+
+        Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
+        if (!assignHomeworkService.isTeacher(userId, homeworkId)) {
+            return ApiResult.fail("没有权限");
+        }
+
+        List<SubmitHomeworkDTO> dtoList = submitHomeworkMapper.selectNotSubmitDTOListByHomeworkId(homeworkId);
+
+        return ApiResult.success(dtoList);
+    }
+
+    @Override
+    public ApiResult<String> zipFile(Long homeworkId) {
+
+        Long userId = loginInfoMapper.selectIdByPhone(Holder.get(PHONE_HOLDER));
+
+        if (!assignHomeworkService.isTeacher(userId, homeworkId)) {
+            return ApiResult.fail("没有权限");
+        }
+
+        List<SubmitHomeworkDTO> submitList = submitHomeworkMapper.selectSubmitDTOListByHomeworkId(homeworkId);
+        submitList.forEach(SubmitHomeworkDTO::refactorName);
+        List<SubmitHomeworkDTO> notSubmitList = submitHomeworkMapper.selectNotSubmitDTOListByHomeworkId(homeworkId);
+        notSubmitList.forEach(SubmitHomeworkDTO::refactorInfo);
+
+        try {
+            ZipStreamCatch zipStreamCatch = new ZipStreamCatch();
+
+            // 添加提交的作业数据
+            for (SubmitHomeworkDTO dto : submitList) {
+                InputStream inputStream = ossWrapper.downFile(dto.getResourceUrl());
+                zipStreamCatch.appendFile(dto.getResourceName(), inputStream);
+                inputStream.close();
+            }
+
+            // 添加未提交的名单
+            StringBuilder sb = new StringBuilder();
+            for (SubmitHomeworkDTO dto : notSubmitList) {
+                sb.append(dto.getStudentInfo()).append("\n");
+            }
+
+            ByteArrayInputStream notSubmitFile = new ByteArrayInputStream(sb.toString().getBytes());
+            zipStreamCatch.appendFile("未提交作业的学生名单.txt", notSubmitFile);
+            notSubmitFile.close();
+
+            InputStream zipInput = zipStreamCatch.getInputStream();
+            String zipUrl = ossWrapper.saveFile(zipInput, zipInput.available(), MemoryUnit.BYTE, ".zip");
+
+            return ApiResult.success("zipUrl", zipUrl);
+        } catch (IOException e) {
+            return ApiResult.error("服务器发生异常, 请稍后重试");
+        }
+    }
 
 }
 

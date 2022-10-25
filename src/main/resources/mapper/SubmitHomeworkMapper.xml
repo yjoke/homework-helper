@@ -23,10 +23,28 @@
         gmt_create,gmt_modify,id_modify,
         is_deleted
     </sql>
-    <select id="selectDTOById" resultType="work.yjoker.homeworkhelper.dto.SubmitHomeworkDTO">
-        SELECT u.clazz AS student_clazz, u.number AS student_number, u.name AS stuednt_name
+
+    <select id="selectSubmitDTOListByHomeworkId" resultType="work.yjoker.homeworkhelper.dto.SubmitHomeworkDTO">
+        SELECT u.clazz AS student_clazz, u.number AS student_number, u.name AS student_name,
                 s.resource_name, s.resource_url, s.resource_size
-            FROM submit_homework s JOIN user_info u ON s.student_id = user_id
-            WHERE s.isDeleted = 0 AND s.assign_id = #{homeworkId}
+            FROM submit_homework s JOIN user_info u ON s.student_id = u.id
+            WHERE s.is_deleted = 0 AND s.assign_id = #{homeworkId}
+    </select>
+
+    <select id="selectNotSubmitDTOListByHomeworkId"
+            resultType="work.yjoker.homeworkhelper.dto.SubmitHomeworkDTO">
+        SELECT u.clazz AS student_clazz, u.number AS student_number, u.name AS student_name
+            FROM user_info u JOIN select_course sc ON u.id = sc.student_id
+            WHERE sc.is_deleted = 0
+                AND sc.course_id = (
+                    SELECT course_id
+                        FROM assign_homework
+                        WHERE is_deleted = 0 AND id = #{homeworkId}
+                )
+                AND u.id not in (
+                    SELECT student_id
+                        FROM submit_homework
+                        WHERE is_deleted = 0 AND assign_id = #{homeworkId}
+                );
     </select>
 </mapper>
